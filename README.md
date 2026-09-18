@@ -86,8 +86,8 @@ If you are unsure, try the unsuffixed one first. When the wrong one is
 installed, jobscout fails to start with an error about a missing
 `libwebkit2gtk` library — install the other build and it will work.
 
-`arm64` builds (Raspberry Pi, Asahi, Arm servers with a desktop) are published
-for WebKitGTK 4.1 only.
+Linux builds are x86_64 only. There is no arm64 build at the moment; if you
+want one for a Raspberry Pi or an Asahi machine, open an issue and say so.
 
 ### Verifying a download
 

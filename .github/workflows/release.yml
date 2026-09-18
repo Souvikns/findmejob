@@ -126,17 +126,26 @@ jobs:
         shell: bash
         run: go install github.com/wailsapp/wails/v2/cmd/wails@${{ env.WAILS_VERSION }}
 
-      # The runner image ships NSIS, but pin the expectation rather than let a
-      # future image change silently drop the installer.
+      # The runner image usually ships NSIS, but install it when it does not
+      # rather than let a future image change silently drop the installer.
+      #
+      # pwsh, not bash: GITHUB_PATH only affects *later* steps, so the check has
+      # to be split in two, and MSYS bash rewrites makensis' /VERSION argument
+      # into a filesystem path.
       - name: Ensure NSIS is present
-        shell: bash
+        shell: pwsh
         run: |
-          set -euo pipefail
-          if ! command -v makensis >/dev/null 2>&1; then
-            choco install nsis -y --no-progress
-            echo "C:/Program Files (x86)/NSIS" >> "$GITHUB_PATH"
-          fi
-          makensis /VERSION || "C:/Program Files (x86)/NSIS/makensis.exe" /VERSION
+          $nsis = "C:\Program Files (x86)\NSIS"
+          if (-not (Get-Command makensis -ErrorAction SilentlyContinue)) {
+            if (-not (Test-Path "$nsis\makensis.exe")) {
+              choco install nsis -y --no-progress
+            }
+            $nsis | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          }
+
+      - name: Verify NSIS
+        shell: pwsh
+        run: makensis /VERSION
 
       - name: Build (windows/${{ matrix.arch }})
         shell: bash
@@ -178,9 +187,12 @@ jobs:
 
   # ---------------------------------------------------------------- Linux ----
   # WebKitGTK 4.0 and 4.1 are incompatible ABIs and distros are split between
-  # them, so amd64 is built twice. arm64 only gets the 4.1 build: every distro
-  # with a current arm64 desktop has already moved off 4.0, and the arm64
-  # compile runs under QEMU, which is slow.
+  # them, so amd64 is built twice.
+  #
+  # x86_64 only. An arm64 Linux build has to run under QEMU on an x86 runner,
+  # and a cgo compile that big takes long enough to dominate the whole release;
+  # it was cut for that reason. If arm64 is wanted later, a native
+  # `ubuntu-24.04-arm` runner is the way to add it back, not QEMU.
   linux:
     runs-on: ubuntu-latest
     strategy:
@@ -191,8 +203,6 @@ jobs:
             webkit: "4.1"
           - arch: amd64
             webkit: "4.0"
-          - arch: arm64
-            webkit: "4.1"
     steps:
       - name: Check out the private source
         uses: actions/checkout@v4
@@ -208,10 +218,6 @@ jobs:
           supabase-key: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
           api-url: ${{ secrets.JOBSCOUT_API_URL }}
           oauth-callback-port: ${{ secrets.OAUTH_CALLBACK_PORT }}
-
-      - name: Set up QEMU
-        if: matrix.arch != 'amd64'
-        uses: docker/setup-qemu-action@v3
 
       - name: Install nfpm
         run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.43.1
@@ -234,7 +240,7 @@ jobs:
       # Kept separate from the release assets: the AppImage job consumes the
       # raw binary rather than recompiling it.
       - uses: actions/upload-artifact@v4
-        if: matrix.arch == 'amd64' && matrix.webkit == '4.1'
+        if: matrix.webkit == '4.1'
         with:
           name: raw-linux-amd64
           path: staging/jobscout
