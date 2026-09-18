@@ -6,8 +6,8 @@ body:
     attributes:
       value: |
         Before filing: if the app will not open at all, check the install notes
-        in the README first — unsigned builds on macOS and Windows, and the
-        WebKitGTK 4.0 / 4.1 split on Linux, account for most first-run failures.
+        in the README first — the unsigned builds on macOS and Windows account
+        for most first-run failures.
 
   - type: input
     id: version
@@ -24,12 +24,8 @@ body:
       options:
         - macOS (Apple Silicon)
         - macOS (Intel)
-        - Windows (amd64)
-        - Windows (arm64)
-        - Linux (.deb)
-        - Linux (.rpm)
-        - Linux (Arch / AUR)
-        - Linux (AppImage or tarball)
+        - Windows
+        - Linux (AppImage)
     validations:
       required: true
 

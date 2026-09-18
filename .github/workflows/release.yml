@@ -31,7 +31,6 @@
 #   SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, JOBSCOUT_API_URL
 #                              compiled into the binaries with -ldflags
 #   OAUTH_CALLBACK_PORT        optional
-#   AUR_SSH_PRIVATE_KEY        optional, only if vars.PUBLISH_AUR is true
 #
 # The release itself is created with the built-in GITHUB_TOKEN — no extra token
 # is needed for that, because the release lands in this repository.
@@ -100,12 +99,11 @@ jobs:
           if-no-files-found: error
 
   # -------------------------------------------------------------- Windows ----
+  # amd64 only, and only the NSIS installer — the portable .zip and the arm64
+  # build were dropped to keep the download page down to one obvious choice
+  # per platform.
   windows:
     runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [amd64, arm64]
     steps:
       - name: Check out the private source
         uses: actions/checkout@v4
@@ -147,62 +145,43 @@ jobs:
         shell: pwsh
         run: makensis /VERSION
 
-      - name: Build (windows/${{ matrix.arch }})
+      - name: Build (windows/amd64)
         shell: bash
-        run: wails build -platform windows/${{ matrix.arch }} -s -nsis -ldflags "$LDFLAGS" -o jobscout.exe
+        run: wails build -platform windows/amd64 -s -nsis -ldflags "$LDFLAGS" -o jobscout.exe
 
       - name: Package
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p dist staging
-          cp build/bin/jobscout.exe staging/jobscout.exe
-          cat > staging/README.txt <<'TXT'
-          jobscout for Windows
-
-          Double-click jobscout.exe, or run the installer instead if you want a
-          Start menu entry.
-
-          The build is not signed with a code-signing certificate, so SmartScreen
-          shows "Windows protected your PC" the first time. Click "More info",
-          then "Run anyway".
-
-          Windows 10 and 11 already ship the WebView2 runtime jobscout renders
-          with. On an older Windows, install it first from
-          https://developer.microsoft.com/microsoft-edge/webview2/
-          TXT
-          (cd staging && 7z a -tzip "../dist/jobscout_${TAG}_windows_${{ matrix.arch }}.zip" .)
+          mkdir -p dist
           installer=$(ls build/bin/*installer*.exe 2>/dev/null | head -1 || true)
-          if [ -n "$installer" ]; then
-            cp "$installer" "dist/jobscout_${TAG}_windows_${{ matrix.arch }}_setup.exe"
-          else
-            echo "::warning::no NSIS installer was produced for ${{ matrix.arch }}"
+          if [ -z "$installer" ]; then
+            echo "::error::wails produced no NSIS installer"
+            exit 1
           fi
+          cp "$installer" "dist/jobscout_${TAG}_windows_amd64_setup.exe"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: bundle-windows-${{ matrix.arch }}
+          name: bundle-windows
           path: dist/*
           if-no-files-found: error
 
   # ---------------------------------------------------------------- Linux ----
-  # WebKitGTK 4.0 and 4.1 are incompatible ABIs and distros are split between
-  # them, so amd64 is built twice.
+  # One AppImage, and nothing else. It bundles its own GTK and WebKitGTK, which
+  # is what makes a single Linux download possible at all: linking against the
+  # system WebKitGTK would mean shipping separate builds for the incompatible
+  # 4.0 and 4.1 ABIs, in each of .deb, .rpm and .pkg.tar.zst.
   #
-  # x86_64 only. An arm64 Linux build has to run under QEMU on an x86 runner,
-  # and a cgo compile that big takes long enough to dominate the whole release;
-  # it was cut for that reason. If arm64 is wanted later, a native
-  # `ubuntu-24.04-arm` runner is the way to add it back, not QEMU.
+  # The compile still happens in the container (Wails needs cgo against the
+  # GTK/WebKit headers), then linuxdeploy bundles the runner's copies of those
+  # libraries into the image. Both halves live in one job so the binary does not
+  # have to travel through an artifact.
+  #
+  # This job is NOT continue-on-error: it is the only Linux artifact, so a
+  # failure here has to stop the release rather than quietly publish without it.
   linux:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - arch: amd64
-            webkit: "4.1"
-          - arch: amd64
-            webkit: "4.0"
     steps:
       - name: Check out the private source
         uses: actions/checkout@v4
@@ -219,54 +198,8 @@ jobs:
           api-url: ${{ secrets.JOBSCOUT_API_URL }}
           oauth-callback-port: ${{ secrets.OAUTH_CALLBACK_PORT }}
 
-      - name: Install nfpm
-        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.43.1
-
-      - name: Build (linux/${{ matrix.arch }}, webkit ${{ matrix.webkit }})
-        run: scripts/build-linux.sh ${{ matrix.arch }} ${{ matrix.webkit }} staging/jobscout
-
-      - name: Package
-        run: |
-          mkdir -p dist
-          scripts/package-linux.sh staging/jobscout \
-            ${{ matrix.arch }} ${{ matrix.webkit }} "$TAG" dist
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: bundle-linux-${{ matrix.arch }}-webkit${{ matrix.webkit }}
-          path: dist/*
-          if-no-files-found: error
-
-      # Kept separate from the release assets: the AppImage job consumes the
-      # raw binary rather than recompiling it.
-      - uses: actions/upload-artifact@v4
-        if: matrix.webkit == '4.1'
-        with:
-          name: raw-linux-amd64
-          path: staging/jobscout
-          if-no-files-found: error
-
-  # ------------------------------------------------------------- AppImage ----
-  # Bundling WebKitGTK is the fragile part of AppImage packaging, so this job
-  # is allowed to fail without holding up the release — the .deb, .rpm and
-  # .pkg.tar.zst packages are the recommended way to install on Linux anyway.
-  appimage:
-    runs-on: ubuntu-latest
-    needs: linux
-    continue-on-error: true
-    steps:
-      - name: Check out the private source
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ env.SOURCE_REPO }}
-          ref: ${{ env.TAG }}
-          token: ${{ secrets.RELEASE_REPO_TOKEN }}
-          persist-credentials: false
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: raw-linux-amd64
-          path: staging
+      - name: Build (linux/amd64, webkit 4.1)
+        run: scripts/build-linux.sh amd64 4.1 staging/jobscout
 
       - name: Install GTK and WebKit
         run: |
@@ -277,20 +210,19 @@ jobs:
 
       - name: Build AppImage
         run: |
-          chmod +x staging/jobscout
           mkdir -p dist
           scripts/make-appimage.sh staging/jobscout "$TAG" dist
 
       - uses: actions/upload-artifact@v4
         with:
-          name: bundle-appimage
+          name: bundle-linux
           path: dist/*
           if-no-files-found: error
 
   # --------------------------------------------------------------- Publish ---
   publish:
     runs-on: ubuntu-latest
-    needs: [macos, windows, linux, appimage]
+    needs: [macos, windows, linux]
     steps:
       # Only the release-notes template is needed from the source repo here.
       - name: Check out the private source
@@ -328,56 +260,3 @@ jobs:
             --repo "${{ github.repository }}" \
             --title "jobscout $TAG" \
             --notes-file "$RUNNER_TEMP/NOTES.md"
-
-  # -------------------------------------------------------------------- AUR --
-  # Set the repository variable PUBLISH_AUR to "true" once jobscout-bin exists
-  # on the AUR and AUR_SSH_PRIVATE_KEY is configured.
-  aur:
-    runs-on: ubuntu-latest
-    needs: publish
-    if: vars.PUBLISH_AUR == 'true'
-    container: archlinux:base-devel
-    steps:
-      - name: Install tools
-        run: pacman -Sy --noconfirm --needed git openssh
-
-      - name: Check out the private source
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ env.SOURCE_REPO }}
-          ref: ${{ env.TAG }}
-          token: ${{ secrets.RELEASE_REPO_TOKEN }}
-          persist-credentials: false
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: bundle-linux-amd64-webkit4.1
-          path: dist
-
-      - name: Configure SSH for the AUR
-        env:
-          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
-        run: |
-          set -euo pipefail
-          install -d -m 700 ~/.ssh
-          printf '%s\n' "$AUR_SSH_PRIVATE_KEY" > ~/.ssh/aur
-          chmod 600 ~/.ssh/aur
-          ssh-keyscan aur.archlinux.org >> ~/.ssh/known_hosts
-          cat > ~/.ssh/config <<'CFG'
-          Host aur.archlinux.org
-            User aur
-            IdentityFile ~/.ssh/aur
-            IdentitiesOnly yes
-          CFG
-
-      # makepkg refuses to run as root, and the container is root.
-      - name: Push jobscout-bin
-        run: |
-          set -euo pipefail
-          useradd -m builder
-          cp -r ~/.ssh /home/builder/.ssh
-          chown -R builder:builder /home/builder/.ssh "$GITHUB_WORKSPACE"
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          su builder -c "cd '$GITHUB_WORKSPACE' && \
-            RELEASE_REPO='${{ github.repository }}' scripts/publish-aur.sh '$TAG' \
-            'dist/jobscout_${TAG}_linux_amd64.tar.gz'"

@@ -36,10 +36,7 @@ install.
 
 ### Windows
 
-Download `jobscout_<version>_windows_amd64_setup.exe` — or the `arm64` build on
-a Snapdragon / Surface Pro X style device — and run it. The `.zip` next to it
-contains the same `jobscout.exe` with no installer, if you would rather not
-install anything.
+Download `jobscout_<version>_windows_amd64_setup.exe` and run it.
 
 The build is not code-signed, so SmartScreen shows **"Windows protected your
 PC"** on first run. Click **More info**, then **Run anyway**.
@@ -50,44 +47,22 @@ On anything older, install it first from
 
 ### Linux
 
-Pick the package for your distribution. All of them install jobscout to
-`/usr/bin`, add it to the application menu, and pull in the GTK and WebKitGTK
-libraries it needs.
+Download `jobscout_<version>_linux_x86_64.AppImage`, make it executable, and
+run it:
 
 ```sh
-# Debian, Ubuntu, Pop!_OS, Mint
-sudo apt install ./jobscout_<version>_amd64.deb
-
-# Fedora, RHEL, openSUSE
-sudo dnf install ./jobscout-<version>-1.x86_64.rpm
-
-# Arch, Manjaro, EndeavourOS — from the AUR
-yay -S jobscout-bin
-# ...or from the release file directly
-sudo pacman -U ./jobscout-<version>-1-x86_64.pkg.tar.zst
+chmod +x jobscout_<version>_linux_x86_64.AppImage
+./jobscout_<version>_linux_x86_64.AppImage
 ```
 
-No package for your distro? Use the `.AppImage` — `chmod +x` it and run it — or
-the `.tar.gz`, which holds the binary, an icon and a note listing the runtime
-libraries to install.
+There is nothing to install and no packages to add first — the AppImage carries
+its own GTK and WebKitGTK, so the same file works on Debian, Ubuntu, Fedora,
+Arch and anything else with a desktop. x86_64 only.
 
-#### Which Linux file do I want?
-
-Downloads marked **`_legacy`** link against **WebKitGTK 4.0**; everything else
-links against **4.1**. The two are incompatible and distributions are split
-between them:
-
-| Your system | Use |
-| --- | --- |
-| Ubuntu 24.04+, Fedora 40+, Arch, Debian 13+ | the unsuffixed files (4.1) |
-| Debian 12, Ubuntu 22.04, and other older releases | the **`_legacy`** files (4.0) |
-
-If you are unsure, try the unsuffixed one first. When the wrong one is
-installed, jobscout fails to start with an error about a missing
-`libwebkit2gtk` library — install the other build and it will work.
-
-Linux builds are x86_64 only. There is no arm64 build at the moment; if you
-want one for a Raspberry Pi or an Asahi machine, open an issue and say so.
+To get it into your application menu, use a tool like
+[Gear Lever](https://github.com/mijorus/gearlever) or
+[AppImageLauncher](https://github.com/TheAssassin/AppImageLauncher), which will
+also keep it updated.
 
 ### Verifying a download
 
