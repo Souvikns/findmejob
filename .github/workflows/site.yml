@@ -1,0 +1,64 @@
+# Build and deploy the download site to GitHub Pages.
+#
+# INACTIVE until you turn Pages on: Settings → Pages → Build and deployment →
+# Source: GitHub Actions. Until then this workflow can be run manually and will
+# build, but the deploy step will fail because the environment does not exist.
+#
+# The site reads the latest release from the GitHub API at runtime, so a new
+# release does NOT need a redeploy — only a change under web/ does.
+#
+# Hosting is not settled yet, so web/vite.config.js uses a relative base and the
+# same build works at a domain root (findmejob.xyz) or under a project path
+# (souvikns.github.io/findmejob). For a custom domain, add web/public/CNAME
+# containing the bare hostname and point a DNS record at GitHub Pages.
+name: site
+
+on:
+  push:
+    branches: [main]
+    paths: ["web/**", ".github/workflows/site.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# A queued deploy should wait for the running one rather than cancel it —
+# cancelling mid-deploy can leave the site on a half-published version.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
