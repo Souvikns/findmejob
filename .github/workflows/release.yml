@@ -17,15 +17,17 @@
 #     that snippet.
 #   * Never add a `pull_request_target`, `issue_comment` or fork-triggered
 #     `pull_request` trigger. Those run attacker-supplied input in a context
-#     that can read SOURCE_REPO_TOKEN, which would hand over the private
+#     that can read RELEASE_REPO_TOKEN, which would hand over the private
 #     source. workflow_dispatch can only be started by someone with write
 #     access here.
 #   * Only pin trusted actions. Any third-party action added below can read
 #     every secret this workflow holds.
 #
 # Required secrets in THIS repository:
-#   SOURCE_REPO_TOKEN          fine-grained PAT, Contents: READ on
-#                              Souvikns/jobscout only
+#   RELEASE_REPO_TOKEN         fine-grained PAT, Contents: READ on
+#                              Souvikns/jobscout only. The name is historical —
+#                              it reads the source, it does not publish; the
+#                              release is created with GITHUB_TOKEN below.
 #   SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, JOBSCOUT_API_URL
 #                              compiled into the binaries with -ldflags
 #   OAUTH_CALLBACK_PORT        optional
@@ -67,7 +69,7 @@ jobs:
         with:
           repository: ${{ env.SOURCE_REPO }}
           ref: ${{ env.TAG }}
-          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          token: ${{ secrets.RELEASE_REPO_TOKEN }}
           persist-credentials: false
 
       - uses: ./.github/actions/prepare
@@ -110,7 +112,7 @@ jobs:
         with:
           repository: ${{ env.SOURCE_REPO }}
           ref: ${{ env.TAG }}
-          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          token: ${{ secrets.RELEASE_REPO_TOKEN }}
           persist-credentials: false
 
       - uses: ./.github/actions/prepare
@@ -197,7 +199,7 @@ jobs:
         with:
           repository: ${{ env.SOURCE_REPO }}
           ref: ${{ env.TAG }}
-          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          token: ${{ secrets.RELEASE_REPO_TOKEN }}
           persist-credentials: false
 
       - uses: ./.github/actions/prepare
@@ -252,7 +254,7 @@ jobs:
         with:
           repository: ${{ env.SOURCE_REPO }}
           ref: ${{ env.TAG }}
-          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          token: ${{ secrets.RELEASE_REPO_TOKEN }}
           persist-credentials: false
 
       - uses: actions/download-artifact@v4
@@ -289,7 +291,7 @@ jobs:
         with:
           repository: ${{ env.SOURCE_REPO }}
           ref: ${{ env.TAG }}
-          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          token: ${{ secrets.RELEASE_REPO_TOKEN }}
           persist-credentials: false
 
       - uses: actions/download-artifact@v4
@@ -337,7 +339,7 @@ jobs:
         with:
           repository: ${{ env.SOURCE_REPO }}
           ref: ${{ env.TAG }}
-          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          token: ${{ secrets.RELEASE_REPO_TOKEN }}
           persist-credentials: false
 
       - uses: actions/download-artifact@v4
