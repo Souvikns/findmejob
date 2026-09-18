@@ -1,0 +1,374 @@
+# Build jobscout from the private source repository and publish the release
+# here.
+#
+# The source lives in Souvikns/jobscout and never appears in this repository —
+# each job clones it onto the runner with a read-only token and only the
+# compiled artifacts are kept. Running the build here rather than in the
+# private repo is what makes it free: Actions minutes are unmetered for public
+# repositories, and macOS runners would otherwise bill at 10x.
+#
+# Cut a release with:
+#   gh workflow run release.yml --repo Souvikns/findmejob -f tag=v0.3.0
+# The tag must already exist in the private repository.
+#
+# SECURITY NOTES — read before editing this file:
+#   * Logs of a public repository are world-readable, and a failing Go or npm
+#     build prints source lines. Treat a red build as a possible disclosure of
+#     that snippet.
+#   * Never add a `pull_request_target`, `issue_comment` or fork-triggered
+#     `pull_request` trigger. Those run attacker-supplied input in a context
+#     that can read SOURCE_REPO_TOKEN, which would hand over the private
+#     source. workflow_dispatch can only be started by someone with write
+#     access here.
+#   * Only pin trusted actions. Any third-party action added below can read
+#     every secret this workflow holds.
+#
+# Required secrets in THIS repository:
+#   SOURCE_REPO_TOKEN          fine-grained PAT, Contents: READ on
+#                              Souvikns/jobscout only
+#   SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, JOBSCOUT_API_URL
+#                              compiled into the binaries with -ldflags
+#   OAUTH_CALLBACK_PORT        optional
+#   AUR_SSH_PRIVATE_KEY        optional, only if vars.PUBLISH_AUR is true
+#
+# The release itself is created with the built-in GITHUB_TOKEN — no extra token
+# is needed for that, because the release lands in this repository.
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag in the private source repo to build and release
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.event.inputs.tag }}
+  cancel-in-progress: false
+
+env:
+  SOURCE_REPO: Souvikns/jobscout
+  WAILS_VERSION: v2.15.0
+  TAG: ${{ github.event.inputs.tag }}
+
+jobs:
+  # ---------------------------------------------------------------- macOS ----
+  # One universal binary covers Intel and Apple Silicon, so there is no reason
+  # to ship separate downloads. The .app is not signed or notarized — see the
+  # quarantine note that ships inside the .dmg.
+  macos:
+    runs-on: macos-15
+    steps:
+      - name: Check out the private source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SOURCE_REPO }}
+          ref: ${{ env.TAG }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          persist-credentials: false
+
+      - uses: ./.github/actions/prepare
+        with:
+          supabase-url: ${{ secrets.SUPABASE_URL }}
+          supabase-key: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          api-url: ${{ secrets.JOBSCOUT_API_URL }}
+          oauth-callback-port: ${{ secrets.OAUTH_CALLBACK_PORT }}
+
+      - name: Install Wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@${{ env.WAILS_VERSION }}
+
+      - name: Build (darwin/universal)
+        run: wails build -platform darwin/universal -s -clean -ldflags "$LDFLAGS"
+
+      - name: Package
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          ditto -c -k --sequesterRsrc --keepParent \
+            build/bin/jobscout.app "dist/jobscout_${TAG}_macos_universal.zip"
+          scripts/make-dmg.sh build/bin/jobscout.app "$TAG" dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle-macos
+          path: dist/*
+          if-no-files-found: error
+
+  # -------------------------------------------------------------- Windows ----
+  windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, arm64]
+    steps:
+      - name: Check out the private source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SOURCE_REPO }}
+          ref: ${{ env.TAG }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          persist-credentials: false
+
+      - uses: ./.github/actions/prepare
+        with:
+          supabase-url: ${{ secrets.SUPABASE_URL }}
+          supabase-key: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          api-url: ${{ secrets.JOBSCOUT_API_URL }}
+          oauth-callback-port: ${{ secrets.OAUTH_CALLBACK_PORT }}
+
+      - name: Install Wails
+        shell: bash
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@${{ env.WAILS_VERSION }}
+
+      # The runner image ships NSIS, but pin the expectation rather than let a
+      # future image change silently drop the installer.
+      - name: Ensure NSIS is present
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v makensis >/dev/null 2>&1; then
+            choco install nsis -y --no-progress
+            echo "C:/Program Files (x86)/NSIS" >> "$GITHUB_PATH"
+          fi
+          makensis /VERSION || "C:/Program Files (x86)/NSIS/makensis.exe" /VERSION
+
+      - name: Build (windows/${{ matrix.arch }})
+        shell: bash
+        run: wails build -platform windows/${{ matrix.arch }} -s -nsis -ldflags "$LDFLAGS" -o jobscout.exe
+
+      - name: Package
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist staging
+          cp build/bin/jobscout.exe staging/jobscout.exe
+          cat > staging/README.txt <<'TXT'
+          jobscout for Windows
+
+          Double-click jobscout.exe, or run the installer instead if you want a
+          Start menu entry.
+
+          The build is not signed with a code-signing certificate, so SmartScreen
+          shows "Windows protected your PC" the first time. Click "More info",
+          then "Run anyway".
+
+          Windows 10 and 11 already ship the WebView2 runtime jobscout renders
+          with. On an older Windows, install it first from
+          https://developer.microsoft.com/microsoft-edge/webview2/
+          TXT
+          (cd staging && 7z a -tzip "../dist/jobscout_${TAG}_windows_${{ matrix.arch }}.zip" .)
+          installer=$(ls build/bin/*installer*.exe 2>/dev/null | head -1 || true)
+          if [ -n "$installer" ]; then
+            cp "$installer" "dist/jobscout_${TAG}_windows_${{ matrix.arch }}_setup.exe"
+          else
+            echo "::warning::no NSIS installer was produced for ${{ matrix.arch }}"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle-windows-${{ matrix.arch }}
+          path: dist/*
+          if-no-files-found: error
+
+  # ---------------------------------------------------------------- Linux ----
+  # WebKitGTK 4.0 and 4.1 are incompatible ABIs and distros are split between
+  # them, so amd64 is built twice. arm64 only gets the 4.1 build: every distro
+  # with a current arm64 desktop has already moved off 4.0, and the arm64
+  # compile runs under QEMU, which is slow.
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            webkit: "4.1"
+          - arch: amd64
+            webkit: "4.0"
+          - arch: arm64
+            webkit: "4.1"
+    steps:
+      - name: Check out the private source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SOURCE_REPO }}
+          ref: ${{ env.TAG }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          persist-credentials: false
+
+      - uses: ./.github/actions/prepare
+        with:
+          supabase-url: ${{ secrets.SUPABASE_URL }}
+          supabase-key: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          api-url: ${{ secrets.JOBSCOUT_API_URL }}
+          oauth-callback-port: ${{ secrets.OAUTH_CALLBACK_PORT }}
+
+      - name: Set up QEMU
+        if: matrix.arch != 'amd64'
+        uses: docker/setup-qemu-action@v3
+
+      - name: Install nfpm
+        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.43.1
+
+      - name: Build (linux/${{ matrix.arch }}, webkit ${{ matrix.webkit }})
+        run: scripts/build-linux.sh ${{ matrix.arch }} ${{ matrix.webkit }} staging/jobscout
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          scripts/package-linux.sh staging/jobscout \
+            ${{ matrix.arch }} ${{ matrix.webkit }} "$TAG" dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle-linux-${{ matrix.arch }}-webkit${{ matrix.webkit }}
+          path: dist/*
+          if-no-files-found: error
+
+      # Kept separate from the release assets: the AppImage job consumes the
+      # raw binary rather than recompiling it.
+      - uses: actions/upload-artifact@v4
+        if: matrix.arch == 'amd64' && matrix.webkit == '4.1'
+        with:
+          name: raw-linux-amd64
+          path: staging/jobscout
+          if-no-files-found: error
+
+  # ------------------------------------------------------------- AppImage ----
+  # Bundling WebKitGTK is the fragile part of AppImage packaging, so this job
+  # is allowed to fail without holding up the release — the .deb, .rpm and
+  # .pkg.tar.zst packages are the recommended way to install on Linux anyway.
+  appimage:
+    runs-on: ubuntu-latest
+    needs: linux
+    continue-on-error: true
+    steps:
+      - name: Check out the private source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SOURCE_REPO }}
+          ref: ${{ env.TAG }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          persist-credentials: false
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: raw-linux-amd64
+          path: staging
+
+      - name: Install GTK and WebKit
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libgtk-3-0 libwebkit2gtk-4.1-0 librsvg2-dev desktop-file-utils
+
+      - name: Build AppImage
+        run: |
+          chmod +x staging/jobscout
+          mkdir -p dist
+          scripts/make-appimage.sh staging/jobscout "$TAG" dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle-appimage
+          path: dist/*
+          if-no-files-found: error
+
+  # --------------------------------------------------------------- Publish ---
+  publish:
+    runs-on: ubuntu-latest
+    needs: [macos, windows, linux, appimage]
+    steps:
+      # Only the release-notes template is needed from the source repo here.
+      - name: Check out the private source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SOURCE_REPO }}
+          ref: ${{ env.TAG }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          persist-credentials: false
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: bundle-*
+          merge-multiple: true
+
+      - name: Checksums and release notes
+        run: |
+          set -euo pipefail
+          # The notes live outside dist/ so they are neither checksummed nor
+          # uploaded as an asset.
+          sed "s|@TAG@|$TAG|g; s|@RELEASE_REPO@|${{ github.repository }}|g" \
+            .github/release-notes.md.in > "$RUNNER_TEMP/NOTES.md"
+          (cd dist && sha256sum * > SHA256SUMS.txt)
+          ls -lh dist
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # The workspace holds a clone of the private repo, so --repo is
+          # required; without it gh would target the wrong repository.
+          gh release create "$TAG" dist/* \
+            --repo "${{ github.repository }}" \
+            --title "jobscout $TAG" \
+            --notes-file "$RUNNER_TEMP/NOTES.md"
+
+  # -------------------------------------------------------------------- AUR --
+  # Set the repository variable PUBLISH_AUR to "true" once jobscout-bin exists
+  # on the AUR and AUR_SSH_PRIVATE_KEY is configured.
+  aur:
+    runs-on: ubuntu-latest
+    needs: publish
+    if: vars.PUBLISH_AUR == 'true'
+    container: archlinux:base-devel
+    steps:
+      - name: Install tools
+        run: pacman -Sy --noconfirm --needed git openssh
+
+      - name: Check out the private source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SOURCE_REPO }}
+          ref: ${{ env.TAG }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          persist-credentials: false
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: bundle-linux-amd64-webkit4.1
+          path: dist
+
+      - name: Configure SSH for the AUR
+        env:
+          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$AUR_SSH_PRIVATE_KEY" > ~/.ssh/aur
+          chmod 600 ~/.ssh/aur
+          ssh-keyscan aur.archlinux.org >> ~/.ssh/known_hosts
+          cat > ~/.ssh/config <<'CFG'
+          Host aur.archlinux.org
+            User aur
+            IdentityFile ~/.ssh/aur
+            IdentitiesOnly yes
+          CFG
+
+      # makepkg refuses to run as root, and the container is root.
+      - name: Push jobscout-bin
+        run: |
+          set -euo pipefail
+          useradd -m builder
+          cp -r ~/.ssh /home/builder/.ssh
+          chown -R builder:builder /home/builder/.ssh "$GITHUB_WORKSPACE"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          su builder -c "cd '$GITHUB_WORKSPACE' && \
+            RELEASE_REPO='${{ github.repository }}' scripts/publish-aur.sh '$TAG' \
+            'dist/jobscout_${TAG}_linux_amd64.tar.gz'"
