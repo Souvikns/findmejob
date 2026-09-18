@@ -1,0 +1,20 @@
+name: Feature request
+description: Suggest something jobscout should do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: >
+        Describe the job-hunting task that is awkward today, rather than the
+        feature you have in mind for it — it makes the shape of the fix easier
+        to see.
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help
+      description: Optional — how you imagine it working.
