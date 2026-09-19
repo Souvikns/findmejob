@@ -77,6 +77,7 @@ jobs:
           supabase-key: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
           api-url: ${{ secrets.JOBSCOUT_API_URL }}
           oauth-callback-port: ${{ secrets.OAUTH_CALLBACK_PORT }}
+          version: ${{ env.TAG }}
 
       - name: Install Wails
         run: go install github.com/wailsapp/wails/v2/cmd/wails@${{ env.WAILS_VERSION }}
@@ -84,6 +85,12 @@ jobs:
       - name: Build (darwin/universal)
         run: wails build -platform darwin/universal -s -clean -ldflags "$LDFLAGS"
 
+      # The asset filenames below are a contract with two other places: the
+      # download page (web/src/release.js) and the app's in-app updater
+      # (internal/updater/github.go in the private source repo), both of which
+      # match on their suffixes. Renaming one here stops installed copies from
+      # updating, with no error anywhere. The macOS .zip is what the updater
+      # installs; the .dmg is for a person to drag from.
       - name: Package
         run: |
           set -euo pipefail
@@ -119,6 +126,7 @@ jobs:
           supabase-key: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
           api-url: ${{ secrets.JOBSCOUT_API_URL }}
           oauth-callback-port: ${{ secrets.OAUTH_CALLBACK_PORT }}
+          version: ${{ env.TAG }}
 
       - name: Install Wails
         shell: bash
@@ -197,6 +205,7 @@ jobs:
           supabase-key: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
           api-url: ${{ secrets.JOBSCOUT_API_URL }}
           oauth-callback-port: ${{ secrets.OAUTH_CALLBACK_PORT }}
+          version: ${{ env.TAG }}
 
       - name: Build (linux/amd64, webkit 4.1)
         run: scripts/build-linux.sh amd64 4.1 staging/jobscout

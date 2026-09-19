@@ -6,6 +6,12 @@
  * so a new release updates this page without a rebuild. The names it matches on
  * are set by the release workflow in .github/workflows/release.yml — keep the
  * two in step.
+ *
+ * There is now a third consumer: the app's own updater, in the private source
+ * repo at internal/updater/github.go, matches the same suffixes to decide what
+ * to download for a platform. Renaming a release asset breaks this page and
+ * silently stops every installed copy from updating, so all three move
+ * together.
  */
 
 export const REPO = 'Souvikns/findmejob';
