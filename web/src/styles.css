@@ -1,35 +1,69 @@
 /*
- * The tokens are jobscout's own, lifted from the app's DESIGN.md so the page
- * and the product read as one thing: warm off-white ground, near-black ink, a
- * single blue-grey accent, one border or one shadow but never both. The app
- * forbids gradients and a dark theme, and so does this page.
+ * THE CONTACT SHEET — findmejob.xyz
  *
- * What changes for the web is scale, not character. A landing page gets one
- * viewport to land its point, so the display sizes run well past the app's
- * 42px ceiling while the weight, tracking and rhythm stay exactly as specified.
+ * You shoot a roll, print every frame small on one sheet, and go down it with a
+ * grease pencil ringing the two worth enlarging. That is the job search: many
+ * candidates, cheaply surveyed, a few marked.
+ *
+ * The ground is warm fibre-paper near-black, and that is not a style choice
+ * dressed up as one. On a real contact print the film's rebate passes light and
+ * prints black while the frames carry the positive image — so a screenshot of a
+ * light desktop application is the correct content for a frame rather than a
+ * fight with the page.
+ *
+ * Two rules the whole sheet obeys:
+ *
+ *   Chinagraph is a MARK, never a surface carrying text. It fails AA as a text
+ *   ground at 3.71:1, and a grease pencil was never a fill anyway. It rings
+ *   things; it does not hold them.
+ *
+ *   No shadows. Depth on a sheet is the sheet and the frames lying on it —
+ *   square corners, rebate edges, and the light inside the window.
  */
 
 :root {
-    --surface: #fbfbf9;
-    --panel: #ffffff;
-    --panel-hover: #f5f5f2;
-    --ink: #232320;
-    --muted: #6d6c67;
-    --subtle: #989791;
-    --line: #e7e6e1;
-    --line-strong: #d5d4ce;
-    --accent-soft: #e5ecef;
-    --accent-ink: #496879;
+    /* The page is the worktop the sheet is lying on. The sheet itself is still
+       film — dark rebate, light frames — it simply is not the whole screen. */
+    --paper: #f2f0ea;
+    --sunk: #e8e4da;
+    --rule: #ddd8cc;
+    --ink: #1a1714;
+    --silver: #645e56;
+    --chinagraph: #c0301a;
+    --amber: #8a5a12;
 
-    --shadow: 0 10px 26px rgba(35, 35, 32, 0.06);
-    --shadow-lift: 0 18px 44px rgba(35, 35, 32, 0.1);
-    --radius: 8px;
-    --radius-panel: 12px;
+    /* The film. These do not invert with the page: a rebate that prints black
+       prints black whatever it is lying on. */
+    --film: #26221d;
+    --film-hi: #322c25;
+    --film-deep: #191612;
+    --window: #fbfaf6;
+    --film-silver: #9a948a;
+    --safelight: #c98a2e;
 
-    --gutter: clamp(20px, 5vw, 56px);
-    --measure: 34rem;
+    /* The four score bands, as the application draws them. */
+    --band-strong-bg: #e1eee4;
+    --band-strong-ink: #35634a;
+    --band-good-bg: #dfe8ec;
+    --band-good-ink: #406072;
+    --band-partial-bg: #f3e9d5;
+    --band-partial-ink: #6f5120;
+    --band-weak-bg: #f0efeb;
+    --band-weak-ink: #6d6c67;
+
+    --gutter: clamp(20px, 5vw, 60px);
+    --page: 1240px;
+    --hair: 1px;
+
+    --display: 'Bricolage Grotesque', Georgia, serif;
+    --text: Archivo, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --settle: 480ms;
+    --feedback: 140ms;
 
     color-scheme: light;
+    accent-color: var(--chinagraph);
 }
 
 *,
@@ -40,40 +74,95 @@
 
 html {
     -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
 }
 
 body {
     margin: 0;
-    background: var(--surface);
+    background: var(--paper);
     color: var(--ink);
-    font-family: Nunito, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui,
-        sans-serif;
+    font-family: var(--text);
     font-size: 16px;
     line-height: 1.6;
+    font-synthesis: none;
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+    font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* The surfaces the browser draws belong to the sheet too: a default blue
+   selection and a chrome-grey scrollbar are ink from another document. */
+::selection {
+    background: var(--chinagraph);
+    color: var(--ink);
+}
+
+* {
+    scrollbar-color: var(--rule) transparent;
+    scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: var(--rule);
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--paper);
+}
+
+:focus-visible {
+    outline: 2px solid var(--chinagraph);
+    outline-offset: 3px;
+}
+
+h1,
+h2,
+h3,
+p,
+dl,
+dd,
+ul,
+ol,
+figure {
+    margin: 0;
+}
+
+ul,
+ol {
+    padding: 0;
+    list-style: none;
 }
 
 a {
     color: inherit;
-    text-decoration-color: var(--line-strong);
-    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--rule);
+    text-underline-offset: 4px;
+    transition: text-decoration-color var(--feedback) ease;
 }
 
 a:hover {
-    text-decoration-color: var(--accent-ink);
-}
-
-/* DESIGN.md: 3px outline at 3px offset, never removed for mouse styling. */
-:focus-visible {
-    outline: 3px solid var(--accent-ink);
-    outline-offset: 3px;
-    border-radius: 2px;
+    text-decoration-color: var(--chinagraph);
 }
 
 img {
     max-width: 100%;
     height: auto;
+}
+
+code,
+kbd {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 .sr-only {
@@ -88,42 +177,211 @@ img {
 }
 
 .skip {
-    position: absolute;
+    position: fixed;
     left: -9999px;
     top: 0;
+    z-index: 40;
     background: var(--ink);
-    color: var(--surface);
-    padding: 12px 16px;
-    z-index: 10;
-    border-radius: 0 0 var(--radius) 0;
+    color: var(--paper);
+    padding: 12px 18px;
+    font-weight: 700;
+    text-decoration: none;
 }
 
 .skip:focus {
     left: 0;
 }
 
-/* --- masthead ---------------------------------------------------------- */
+/* ====================================================================== */
+/* The film                                                               */
+/* ====================================================================== */
+
+/*
+ * Sprocket perforations. A repeating gradient rather than a dozen empty spans:
+ * there are twelve per edge, none of them mean anything individually, and this
+ * is a real measuring artefact of film stock rather than decorative stripes.
+ */
+.perfs {
+    display: block;
+    height: 9px;
+    flex: none;
+    background-image: repeating-linear-gradient(
+        to right,
+        transparent 0 7px,
+        var(--paper) 7px 15px
+    );
+    background-color: var(--film-hi);
+}
+
+/* Edge printing: the condensed type the manufacturer exposes between the
+   perforations. Archivo at width 62 is that type. */
+.edge-mark {
+    display: block;
+    padding: 5px 8px 0;
+    font-size: 10px;
+    font-weight: 600;
+    font-stretch: 62%;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--safelight);
+}
+
+.edge-mark b {
+    color: var(--window);
+    font-weight: 700;
+}
+
+.frame {
+    min-width: 0;
+}
+
+.frame-film {
+    position: relative;
+    background: var(--film);
+    padding: 6px 0 4px;
+}
+
+.frame-window {
+    position: relative;
+    margin: 6px 8px;
+    background: var(--window);
+    /* Square, always. A rounded film frame is not a film frame. */
+    border-radius: 0;
+}
+
+.frame-window img {
+    display: block;
+    width: 100%;
+}
+
+.frame figcaption {
+    margin-top: 12px;
+    padding-inline: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--silver);
+}
+
+/* ====================================================================== */
+/* The film                                                               */
+/* ====================================================================== */
+
+/*
+ * Sprocket perforations. A repeating gradient rather than a dozen empty spans:
+ * there are twelve per edge, none of them mean anything individually, and this
+ * is a real measuring artefact of film stock rather than decorative stripes.
+ */
+.perfs {
+    display: block;
+    height: 9px;
+    flex: none;
+    background-image: repeating-linear-gradient(
+        to right,
+        transparent 0 7px,
+        var(--paper) 7px 15px
+    );
+    background-color: var(--film-hi);
+}
+
+/* Edge printing: the condensed type the manufacturer exposes between the
+   perforations. Archivo at width 62 is that type. */
+.edge-mark {
+    display: block;
+    padding: 5px 8px 0;
+    font-size: 10px;
+    font-weight: 600;
+    font-stretch: 62%;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--safelight);
+}
+
+.edge-mark b {
+    color: var(--window);
+    font-weight: 700;
+}
+
+.frame {
+    min-width: 0;
+}
+
+.frame-film {
+    position: relative;
+    background: var(--film);
+    padding: 6px 0 4px;
+}
+
+.frame-window {
+    position: relative;
+    margin: 6px 8px;
+    background: var(--window);
+    /* Square, always. A rounded film frame is not a film frame. */
+    border-radius: 0;
+}
+
+.frame-window img {
+    display: block;
+    width: 100%;
+}
+
+.frame figcaption {
+    margin-top: 12px;
+    padding-inline: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--silver);
+}
+
+/*
+ * The grease-pencil ring. One open arc, drawn on: a chinagraph ring that meets
+ * itself perfectly reads as a shape rather than as a mark, and a hand lays one
+ * down starting at the lower left.
+ */
+
+
+
+
+
+
+
+
+/* ====================================================================== */
+/* Masthead                                                               */
+/* ====================================================================== */
 
 .masthead {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 24px var(--gutter);
-    max-width: 1180px;
+    max-width: var(--page);
     margin: 0 auto;
+    padding: 22px var(--gutter);
 }
 
 .wordmark {
-    font-weight: 800;
-    font-size: 18px;
-    letter-spacing: -0.03em;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--display);
+    font-size: 19px;
+    font-weight: 700;
+    font-stretch: 80%;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+}
+
+.ring-mark {
+    width: 30px;
+    height: 30px;
+    flex: none;
+    color: var(--ink);
 }
 
 .masthead-link {
     font-size: 14px;
     font-weight: 600;
-    color: var(--muted);
+    color: var(--silver);
     text-decoration: none;
 }
 
@@ -131,33 +389,28 @@ img {
     color: var(--ink);
 }
 
-/* --- hero -------------------------------------------------------------- */
+/* ====================================================================== */
+/* The sheet                                                              */
+/* ====================================================================== */
 
 main {
-    max-width: 1180px;
+    max-width: var(--page);
     margin: 0 auto;
     padding: 0 var(--gutter);
 }
 
-/* One column on a phone, two from the width where the screenshot can be read
-   at a useful size. Below that the image would be a thumbnail of a 1200px
-   window, which proves nothing. */
 .hero {
-    padding: clamp(36px, 7vw, 80px) 0 clamp(40px, 7vw, 88px);
     display: grid;
-    /* minmax(0, 1fr), not the implicit `auto`: a grid column sized to its
-       content lets anything unbreakable inside it push the whole page wider
-       than the viewport. */
     grid-template-columns: minmax(0, 1fr);
     gap: clamp(40px, 6vw, 64px);
+    padding: clamp(28px, 5vw, 56px) 0 clamp(44px, 7vw, 88px);
     align-items: start;
 }
 
-@media (min-width: 1080px) {
+@media (min-width: 1000px) {
     .hero {
-        grid-template-columns: minmax(0, 27rem) minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
         gap: clamp(40px, 5vw, 72px);
-        align-items: center;
     }
 }
 
@@ -165,127 +418,223 @@ main {
     min-width: 0;
 }
 
+/* Type as the primary material, at the scale of imagery rather than above it. */
 h1 {
-    margin: 0;
-    /* The app's title scale, taken up to web display size: same 800 weight and
-       -0.045em tracking, same 1.05 line-height. */
-    font-size: clamp(2.5rem, 6vw, 3.75rem);
-    font-weight: 800;
-    letter-spacing: -0.045em;
-    line-height: 1.05;
+    font-family: var(--display);
+    font-size: clamp(2.35rem, 5.4vw, 4rem);
+    font-weight: 700;
+    font-stretch: 84%;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
 }
 
 .lede {
-    margin: 24px 0 0;
-    max-width: var(--measure);
-    font-size: clamp(1.0625rem, 1.3vw, 1.125rem);
-    color: var(--muted);
+    margin-top: 22px;
+    max-width: 40ch;
+    font-size: clamp(1rem, 1.2vw, 1.0625rem);
+    color: var(--silver);
 }
 
-/* --- download ---------------------------------------------------------- */
+.lede strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+/* ====================================================================== */
+/* The download — the one lit block on a dark sheet                       */
+/* ====================================================================== */
 
 .download {
-    margin-top: 40px;
+    margin-top: 34px;
 }
 
-.button {
+.print {
     display: inline-block;
     background: var(--ink);
-    color: var(--surface);
+    color: var(--paper);
     font: inherit;
     font-weight: 700;
     font-size: 1rem;
+    letter-spacing: -0.01em;
     text-decoration: none;
-    padding: 0 28px;
-    line-height: 52px;
-    border-radius: var(--radius);
-    transition: transform 0.16s ease, box-shadow 0.16s ease;
+    padding: 0 30px;
+    line-height: 54px;
+    border: 0;
+    transition: background var(--feedback) ease, transform var(--feedback) ease;
 }
 
-.button:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-lift);
+.print:hover {
+    background: #fff;
 }
 
-.button:active {
-    transform: translateY(0);
+.print:active {
+    transform: scale(0.99);
+    transition-duration: 80ms;
 }
 
-.button-quiet {
+.print-quiet {
     background: transparent;
     color: var(--ink);
-    box-shadow: inset 0 0 0 1px var(--line-strong);
+    box-shadow: inset 0 0 0 2px var(--rule);
 }
 
-.button-loading {
-    opacity: 0.4;
+.print-quiet:hover {
+    background: var(--sunk);
+    box-shadow: inset 0 0 0 2px var(--silver);
+}
+
+.print-wait {
+    background: var(--sunk);
+    color: var(--silver);
     cursor: wait;
 }
 
-.version {
-    margin: 12px 0 0;
+.print-note {
+    margin-top: 14px;
+    max-width: 44ch;
     font-size: 13px;
-    color: var(--subtle);
+    line-height: 1.7;
+    color: var(--silver);
+    overflow-wrap: anywhere;
+    animation: settle 420ms var(--ease-out) both;
 }
 
-.others {
-    margin: 16px 0 0;
+.print-note b {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+@keyframes settle {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+}
+
+/* --- the platform strip ------------------------------------------------ */
+
+/* Three frames, and the ring is on yours. Marking a different one is the
+   override, which is the same gesture the whole sheet is about. */
+.strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 26px;
+    margin-bottom: 10px;
+}
+
+.chip {
+    flex: 1 1 8rem;
+    min-width: 0;
+    padding: 5px;
+    border: 0;
+    background: var(--film);
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
+    transition: background var(--feedback) ease;
+}
+
+.chip:hover {
+    background: var(--film-hi);
+}
+
+.chip-window {
+    position: relative;
+    display: block;
+    padding: 10px 12px;
+    background: var(--film-deep);
+}
+
+.chip b {
+    display: block;
     font-size: 14px;
-    color: var(--muted);
+    font-weight: 700;
+    color: var(--window);
 }
 
-/* --- first run --------------------------------------------------------- */
+.chip-window > span {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+    font-stretch: 78%;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--film-silver);
+}
 
-/* The one panel on the page. It earns the boundary: it is the only block a
-   visitor must read before their first launch, and it has to survive being
-   skimmed past the button above it. */
+.chip.is-chosen {
+    background: var(--film-hi);
+    /* The mark, without a circle: a grease-pencil stroke down the chosen
+       frame's leading edge. A lit window here would have given the page a
+       second bright block competing with the download. */
+    box-shadow: inset 3px 0 0 var(--chinagraph);
+}
+
+.chip.is-chosen b {
+    color: var(--window);
+}
+
+
+
+/* ====================================================================== */
+/* Before first launch                                                    */
+/* ====================================================================== */
+
+/*
+ * macOS reports an unsigned app as "damaged", which reads as a corrupt download
+ * rather than a missing signature. A visitor who meets that unprepared deletes
+ * the file and leaves, so this sits directly under the download rather than in
+ * documentation they would have to go and find.
+ */
 .firstrun {
-    margin-top: 32px;
+    margin-top: 34px;
     max-width: 40rem;
-    background: var(--accent-soft);
-    border-radius: var(--radius-panel);
-    padding: 24px;
+    background: var(--sunk);
+    padding: 20px 22px;
+    border-left: 2px solid var(--chinagraph);
 }
 
 .firstrun h2 {
-    margin: 0;
-    font-size: 15px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
-    color: var(--accent-ink);
-}
-
-.firstrun p {
-    margin: 8px 0 0;
-    font-size: 14px;
+    font-family: var(--display);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
     color: var(--ink);
 }
 
+.firstrun p {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--silver);
+}
+
+.firstrun p strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+
 .firstrun .after {
-    color: var(--muted);
     font-size: 13px;
 }
 
 .command {
     display: flex;
+    flex-wrap: wrap;
     align-items: stretch;
     gap: 8px;
     margin-top: 16px;
 }
 
 .command code {
-    flex: 1;
+    flex: 1 1 15rem;
     min-width: 0;
-    background: var(--panel);
-    border-radius: var(--radius);
-    padding: 10px 12px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: var(--ink);
+    padding: 11px 13px;
     font-size: 12.5px;
-    line-height: 1.5;
-    color: var(--ink);
-    /* The command wraps rather than scrolling. A command the visitor can only
-       see half of is not an instruction, and a horizontal scrollbar inside a
-       two-line panel is worse than a second line. */
+    line-height: 1.55;
+    color: var(--paper);
     white-space: pre-wrap;
     overflow-wrap: anywhere;
 }
@@ -293,109 +642,372 @@ h1 {
 .command button {
     flex: none;
     align-self: flex-start;
-    padding-block: 10px;
-    font: inherit;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--accent-ink);
-    background: var(--panel);
+    padding: 11px 15px;
     border: 0;
-    border-radius: var(--radius);
-    padding-inline: 14px;
+    background: var(--ink);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    font-stretch: 84%;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--paper);
     cursor: pointer;
+    transition: background var(--feedback) ease, color var(--feedback) ease;
 }
 
 .command button:hover {
-    background: var(--panel-hover);
+    background: var(--silver);
+    color: var(--paper);
 }
 
-/* --- screenshot -------------------------------------------------------- */
+/* Copying has no other visible result on the page, so the acknowledgment has to
+   be unmistakable: the button lights and the command it took flashes its edge. */
+.command button[data-copied='true'] {
+    background: var(--chinagraph);
+    color: var(--paper);
+}
 
-.hero-shot {
-    margin: 0;
+.command:has(button[data-copied='true']) code {
+    animation: copied 620ms var(--ease-out);
+}
+
+@keyframes copied {
+    0% {
+        box-shadow: inset 0 0 0 2px var(--chinagraph);
+    }
+    100% {
+        box-shadow: inset 0 0 0 2px transparent;
+    }
+}
+
+/* ====================================================================== */
+/* The hero frame                                                         */
+/* ====================================================================== */
+
+.hero-frame {
     min-width: 0;
 }
 
-.hero-shot img {
-    display: block;
-    width: 100%;
-    border-radius: var(--radius-panel);
-    /* The capture is the window's exact frame — square corners, no shadow — so
-       the depth is applied here and the asset stays reusable at any radius. A
-       hairline keeps the app's own off-white ground from dissolving into the
-       page's, which is nearly the same colour. */
-    box-shadow: var(--shadow-lift);
-    outline: 1px solid var(--line);
-    outline-offset: -1px;
+/* The sheet is laid down rather than simply being there. */
+.hero-frame[data-stage='armed'] .frame {
+    opacity: 0;
+    transform: translateY(16px) scale(0.99);
 }
 
-.hero-shot figcaption {
-    margin-top: 14px;
-    font-size: 13px;
-    color: var(--subtle);
+.hero-frame[data-stage='running'] .frame {
+    opacity: 1;
+    transform: none;
+    transition: opacity var(--settle) var(--ease-out),
+        transform 620ms var(--ease-out);
 }
 
-/* --- what it does ------------------------------------------------------ */
+.hero-frame[data-stage='armed'] 
 
-.what {
-    padding: clamp(32px, 6vw, 72px) 0;
-    border-top: 1px solid var(--line);
+.hero-frame[data-stage='running'] 
+
+/* ====================================================================== */
+/* Section furniture                                                      */
+/* ====================================================================== */
+
+.what,
+.roll,
+.scheme {
+    padding: clamp(34px, 6vw, 72px) 0 clamp(28px, 4vw, 48px);
+    border-top: var(--hair) solid var(--rule);
 }
 
-.what h2 {
-    margin: 0 0 32px;
-    font-size: 12px;
+.what h2,
+.roll h2,
+.scheme h2 {
+    margin-bottom: 34px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.09em;
+    font-stretch: 70%;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--subtle);
+    color: var(--amber);
 }
 
-.facts {
+/* ====================================================================== */
+/* The mark scheme                                                        */
+/* ====================================================================== */
+
+.scheme-body {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 32px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(28px, 4vw, 44px);
+    align-items: start;
+}
+
+@media (min-width: 900px) {
+    .scheme-body {
+        grid-template-columns: minmax(0, 1fr) minmax(300px, 0.82fr);
+        gap: clamp(36px, 5vw, 72px);
+    }
+}
+
+.scheme-side p {
+    max-width: 46ch;
+    font-size: 15px;
+    color: var(--silver);
+}
+
+.scheme-side p + p {
+    margin-top: 14px;
+}
+
+.weights {
+    min-width: 0;
+    max-width: 30rem;
+}
+
+.weight {
+    display: grid;
+    gap: 7px;
+    padding: 13px 0;
+    border-bottom: var(--hair) solid var(--rule);
+}
+
+.weight:first-child {
+    padding-top: 0;
+}
+
+.weight:last-child {
+    border-bottom: 0;
+}
+
+.weight dt {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+}
+
+.weight dd {
+    display: flex;
+    align-items: center;
+    gap: 13px;
     margin: 0;
 }
 
-.facts > div {
+.weight-track {
+    flex: 1;
+    min-width: 0;
+    height: 9px;
+    background: var(--sunk);
+    overflow: hidden;
+}
+
+/*
+ * The bar is monochrome on purpose: a weight is a proportion, the length
+ * already carries it, and tinting five criteria in five colours would imply a
+ * ranking the colours do not encode. Colour appears on the bands below, where
+ * it means something.
+ */
+.weight-fill {
+    display: block;
+    height: 100%;
+    width: calc(var(--weight) * 1%);
+    background: var(--ink);
+    transform-origin: left center;
+}
+
+.weight b {
+    flex: none;
+    min-width: 2ch;
+    text-align: right;
+    font-size: 13px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+}
+
+[data-stage='armed'] .weight-fill {
+    transform: scaleX(0);
+}
+
+[data-stage='running'] .weight-fill {
+    transform: scaleX(1);
+    transition: transform 560ms var(--ease-out);
+    transition-delay: calc(var(--step) * 70ms);
+}
+
+[data-stage='armed'] .weight b {
+    opacity: 0;
+}
+
+[data-stage='running'] .weight b {
+    opacity: 1;
+    transition: opacity 260ms ease calc(var(--step) * 70ms + 180ms);
+}
+
+.bands {
+    margin-top: clamp(24px, 3vw, 36px);
+}
+
+.bands-label {
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--silver);
+}
+
+.bands ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+/* The one place colour carries meaning on the sheet. Each band keeps its hue
+   from the application and the word is always spelled out — the tint is a
+   second cue, never the only one. */
+.band {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 11px 14px;
+}
+
+.band b {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.band span {
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.8;
+}
+
+.band-strong { background: var(--band-strong-bg); color: var(--band-strong-ink); }
+.band-good { background: var(--band-good-bg); color: var(--band-good-ink); }
+.band-partial { background: var(--band-partial-bg); color: var(--band-partial-ink); }
+.band-weak { background: var(--band-weak-bg); color: var(--band-weak-ink); }
+
+[data-stage='armed'] .band {
+    opacity: 0;
+    transform: translateY(8px);
+}
+
+[data-stage='running'] .band {
+    opacity: 1;
+    transform: none;
+    transition: opacity 320ms var(--ease-out) calc(var(--step) * 60ms + 320ms),
+        transform 320ms var(--ease-out) calc(var(--step) * 60ms + 320ms);
+}
+
+/* ====================================================================== */
+/* What it does                                                           */
+/* ====================================================================== */
+
+.facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 34px clamp(32px, 4vw, 52px);
+}
+
+.fact {
     min-width: 0;
 }
 
 .facts dt {
+    font-family: var(--display);
     font-size: 17px;
-    font-weight: 800;
+    font-weight: 700;
+    font-stretch: 88%;
     letter-spacing: -0.02em;
-    line-height: 1.3;
+    line-height: 1.25;
+    color: var(--ink);
 }
 
 .facts dd {
-    margin: 8px 0 0;
+    margin-top: 10px;
     font-size: 15px;
-    color: var(--muted);
+    color: var(--silver);
 }
 
-/* --- footer ------------------------------------------------------------ */
+kbd {
+    display: inline-block;
+    min-width: 1.6em;
+    padding: 1px 5px;
+    text-align: center;
+    background: var(--sunk);
+    font-size: 12px;
+    color: var(--ink);
+}
+
+/* Six steps at 55ms is 275ms of sequence — one arrival, not six. */
+.facts[data-stage='armed'] .fact {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.facts[data-stage='running'] .fact {
+    opacity: 1;
+    transform: none;
+    transition: opacity 380ms var(--ease-out) calc(var(--step) * 55ms),
+        transform 380ms var(--ease-out) calc(var(--step) * 55ms);
+}
+
+/* ====================================================================== */
+/* The rest of the roll                                                   */
+/* ====================================================================== */
+
+.frames {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(26px, 3.5vw, 40px);
+}
+
+/* With nothing captured, every frame removes itself and the heading would
+   introduce an empty grid. */
+.roll:has(.frames:empty) {
+    display: none;
+}
+
+/* ====================================================================== */
+/* Foot                                                                   */
+/* ====================================================================== */
 
 footer {
-    max-width: 1180px;
+    max-width: var(--page);
     margin: 0 auto;
-    padding: 32px var(--gutter) 56px;
-    border-top: 1px solid var(--line);
-    font-size: 14px;
-    color: var(--muted);
+    padding: clamp(28px, 4vw, 44px) var(--gutter) clamp(44px, 6vw, 72px);
+    border-top: var(--hair) solid var(--rule);
 }
 
-footer p {
-    margin: 0;
+.foot-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 26px;
+    font-size: 15px;
+    font-weight: 600;
 }
 
-footer .fine {
-    margin-top: 8px;
+.fine {
+    margin-top: 14px;
+    max-width: 62ch;
     font-size: 13px;
-    color: var(--subtle);
+    line-height: 1.7;
+    color: var(--silver);
 }
 
+.fine code {
+    font-size: 12px;
+    color: var(--ink);
+}
+
+/* ====================================================================== */
+/* Reduced motion                                                         */
+/* ====================================================================== */
+
+/*
+ * Fewer and gentler, not none: the colour and state changes that confirm an
+ * action stay and only the movement goes. The reveals never arm — useReveal
+ * checks the same preference — so everything is simply in its finished state,
+ * the chinagraph ring included.
+ */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -405,7 +1017,11 @@ footer .fine {
         transition-duration: 0.01ms !important;
     }
 
-    .button:hover {
+    .print:active {
         transform: none;
+    }
+
+    .command button {
+        transition-duration: 120ms !important;
     }
 }

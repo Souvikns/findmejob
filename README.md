@@ -1,8 +1,27 @@
 # jobscout
 
 A desktop job search. Sign in with GitHub, search across roles pulled from
-Greenhouse and Wellfound, filter by remote, seniority and employment type, and
-work through the results without a browser tab in sight.
+Greenhouse and Wellfound, and see every listing scored against your own résumé
+— on your own machine, with the working shown.
+
+- **One corpus, and nothing stale.** Every search is bounded to the last two
+  months — an older posting is usually filled or abandoned — and each result
+  says which of the two boards it came from.
+- **Filters that match how you look.** Location, work mode, seniority,
+  employment type and years of experience; sort by match or by newest. Location
+  suggestions carry their own job counts, and an opened listing marks where your
+  search words landed in it.
+- **A match score with its breakdown.** Five criteria at stated weights, and an
+  opened listing names every one that counted, what it found, and the ones it
+  dropped because the posting said nothing about them.
+- **Your résumé is read on your machine.** Drop a PDF into Settings and it is
+  read in the app's own window; the file itself is never uploaded and no score
+  is ever stored. The profile it fills in follows you to another machine.
+- **Ask an agent about a listing.** A conversation beside the posting, answered
+  by a coding agent you already have installed — Claude Code, opencode or codex.
+- **Run it from the keyboard.** A command palette on `⌘K`, `/` to search, `j`
+  and `k` to move, `?` for every shortcut.
+- **It updates itself** in place on all three platforms.
 
 **[Download the latest release →](https://github.com/Souvikns/findmejob/releases/latest)**
 

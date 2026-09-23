@@ -1,0 +1,89 @@
+{
+  "northStar": "The Contact Sheet",
+  "philosophy": "The page is the worktop a contact sheet is lying on. The sheet is film \u2014 dark rebate, light frames, sprocket perforations, edge printing \u2014 and the mark is a grease-pencil stroke along an edge. Many candidates surveyed cheaply, a few marked.",
+  "antiReference": "The developer-tool brand this category ships: geometric sans wordmark, one abstract glyph, a single indigo accent, soft shadows. That is also what findmejob.xyz looked like before this system.",
+  "ramps": {
+    "paper": {
+      "base": "#f2f0ea",
+      "sunk": "#e8e4da",
+      "rule": "#ddd8cc"
+    },
+    "ink": {
+      "base": "#1a1714",
+      "secondary": "#645e56"
+    },
+    "film": {
+      "deep": "#191612",
+      "base": "#26221d",
+      "hi": "#322c25",
+      "silver": "#9a948a",
+      "window": "#fbfaf6"
+    },
+    "mark": {
+      "chinagraph": "#c0301a",
+      "safelight": "#c98a2e",
+      "amberInk": "#8a5a12"
+    },
+    "bands": {
+      "strong": {
+        "bg": "#e1eee4",
+        "ink": "#35634a",
+        "contrast": "5.78:1"
+      },
+      "good": {
+        "bg": "#dfe8ec",
+        "ink": "#406072",
+        "contrast": "5.39:1"
+      },
+      "partial": {
+        "bg": "#f3e9d5",
+        "ink": "#6f5120",
+        "contrast": "6.06:1"
+      },
+      "weak": {
+        "bg": "#f0efeb",
+        "ink": "#6d6c67",
+        "contrast": "4.57:1"
+      }
+    }
+  },
+  "elevation": {
+    "strategy": "none",
+    "note": "No shadows anywhere. Depth is value layering: paper, then film, then window, then mark. A drop shadow would make the film float above the worktop instead of resting on it."
+  },
+  "motion": {
+    "easing": "cubic-bezier(0.16, 1, 0.3, 1)",
+    "arrival": "380-620ms",
+    "feedback": "140ms",
+    "press": "80ms",
+    "signature": "The mark scheme drawing itself: five weight bars filling 70ms apart with their figures arriving behind them.",
+    "reducedMotion": "The reveal hook checks prefers-reduced-motion and never arms; every element renders finished. Colour feedback that confirms an action survives, movement does not."
+  },
+  "breakpoints": {
+    "hero": "1000px",
+    "scheme": "900px",
+    "page": "1240px"
+  },
+  "rules": [
+    "The Mark Rule. Chinagraph is a mark, never a surface carrying text \u2014 it fails AA as a text ground at 3.71:1.",
+    "The Straight Stroke Rule. The mark is a stroke along an edge. No rings, circles or drawn-on loops.",
+    "The Two Meanings Rule. Colour carries meaning in exactly two places: the mark, and the score bands.",
+    "The Flat Sheet Rule. If something must read as raised, change its value, not add a shadow.",
+    "Square corners everywhere. border-radius is 0 across the whole system.",
+    "The Imagery Rule. Type is a primary material at the scale of pictures, never introduced by a kicker."
+  ],
+  "components": {
+    "button-primary": {
+      "html": "<a class=\"print\" href=\"#\">Download for macOS</a>",
+      "css": ".print{display:inline-block;background:#1a1714;color:#f2f0ea;font:700 1rem/54px Archivo,system-ui,sans-serif;letter-spacing:-.01em;text-decoration:none;padding:0 30px;border:0;transition:background 140ms ease,transform 140ms ease}.print:hover{background:#fff}.print:active{transform:scale(.99);transition-duration:80ms}"
+    },
+    "chip": {
+      "html": "<button class=\"chip is-chosen\"><span class=\"chip-window\"><b>macOS</b><span>DMG \u00b7 12 MB</span></span></button>",
+      "css": ".chip{padding:5px;border:0;background:#26221d;cursor:pointer;text-align:left}.chip.is-chosen{background:#322c25;box-shadow:inset 3px 0 0 #c0301a}.chip-window{position:relative;display:block;padding:10px 12px;background:#191612}.chip b{display:block;font:700 14px Archivo,system-ui,sans-serif;color:#fbfaf6}.chip-window>span{display:block;margin-top:2px;font:400 11px Archivo,system-ui,sans-serif;font-stretch:78%;letter-spacing:.08em;text-transform:uppercase;color:#9a948a}"
+    },
+    "frame": {
+      "html": "<figure class=\"frame\"><div class=\"frame-film\"><span class=\"perfs\"></span><div class=\"frame-window\"><img alt=\"\"></div><span class=\"perfs\"></span><span class=\"edge-mark\">jobscout 400 <b>12A</b></span></div><figcaption>Discover \u2014 the screen the app opens on.</figcaption></figure>",
+      "css": ".frame-film{position:relative;background:#26221d;padding:6px 0 4px}.perfs{display:block;height:9px;background-image:repeating-linear-gradient(to right,transparent 0 7px,#f2f0ea 7px 15px);background-color:#322c25}.frame-window{position:relative;margin:6px 8px;background:#fbfaf6;border-radius:0}.frame-window img{display:block;width:100%}.edge-mark{display:block;padding:5px 8px 0;font:600 10px Archivo,system-ui,sans-serif;font-stretch:62%;letter-spacing:.18em;text-transform:uppercase;color:#c98a2e}.edge-mark b{color:#fbfaf6;font-weight:700}.frame figcaption{margin-top:12px;padding-inline:8px;font:400 13px/1.5 Archivo,system-ui,sans-serif;color:#645e56}"
+    }
+  }
+}

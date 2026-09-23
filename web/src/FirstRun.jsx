@@ -76,7 +76,7 @@ export default function FirstRun({platform}) {
             {note.command && (
                 <div className="command">
                     <code>{note.command}</code>
-                    <button type="button" onClick={copy}>
+                    <button type="button" onClick={copy} data-copied={copied}>
                         {copied ? 'Copied' : 'Copy'}
                         <span className="sr-only"> the command to your clipboard</span>
                     </button>
