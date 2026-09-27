@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {IconCheck, IconCopy} from './Icons';
 
 /**
  * The unsigned-app warning, answered before it happens.
@@ -8,8 +9,16 @@ import {useState} from 'react';
  * with "jobscout is damaged and can't be opened", which reads like a corrupt
  * download rather than a missing signature. A visitor who meets that with no
  * warning concludes the app is broken and leaves, so the answer sits directly
- * under the download button rather than in documentation they would have to
- * go looking for.
+ * under the download button rather than in documentation they would have to go
+ * looking for.
+ *
+ * It is styled as a hairline note on the canvas rather than as a warning in a
+ * tinted box: colour on this page means a score band, and dressing an ordinary
+ * install step as an alert would make the download look riskier than it is.
+ *
+ * `boxed` puts it in a card for the install page, where all three sit together
+ * and each needs an edge of its own; `label` names the platform, which is only
+ * worth saying when the other two are visible beside it.
  */
 const QUARANTINE = 'xattr -dr com.apple.quarantine /Applications/jobscout.app';
 
@@ -32,7 +41,7 @@ const NOTES = {
             <>
                 The installer is not code-signed, so Windows shows{' '}
                 <strong>“Windows protected your PC”</strong> the first time you run it.
-                Click <strong>More info</strong>, then <strong>Run anyway</strong>.
+                Choose <strong>More info</strong>, then <strong>Run anyway</strong>.
             </>
         ),
         after:
@@ -42,9 +51,9 @@ const NOTES = {
         heading: 'Make it executable, then run it.',
         body: (
             <>
-                Nothing to install and no packages to add first — the AppImage carries
-                its own GTK and WebKit, so the same file works on Debian, Ubuntu,
-                Fedora and Arch.
+                Nothing to install and no packages to add first — the AppImage carries its
+                own GTK and WebKit, so the same file works on Debian, Ubuntu, Fedora and
+                Arch.
             </>
         ),
         command: 'chmod +x jobscout-*.AppImage && ./jobscout-*.AppImage',
@@ -52,7 +61,7 @@ const NOTES = {
     },
 };
 
-export default function FirstRun({platform}) {
+export default function FirstRun({platform, label, boxed = false}) {
     const note = NOTES[platform];
     const [copied, setCopied] = useState(false);
 
@@ -70,13 +79,15 @@ export default function FirstRun({platform}) {
     }
 
     return (
-        <aside className="firstrun">
+        <aside className={`firstrun${boxed ? ' firstrun-boxed' : ''}`}>
+            {label && <p className="firstrun-label">{label}</p>}
             <h2>{note.heading}</h2>
             <p>{note.body}</p>
             {note.command && (
                 <div className="command">
                     <code>{note.command}</code>
                     <button type="button" onClick={copy} data-copied={copied}>
+                        {copied ? <IconCheck size={15} /> : <IconCopy size={15} />}
                         {copied ? 'Copied' : 'Copy'}
                         <span className="sr-only"> the command to your clipboard</span>
                     </button>

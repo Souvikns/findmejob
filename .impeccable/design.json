@@ -1,89 +1,156 @@
 {
-  "northStar": "The Contact Sheet",
-  "philosophy": "The page is the worktop a contact sheet is lying on. The sheet is film \u2014 dark rebate, light frames, sprocket perforations, edge printing \u2014 and the mark is a grease-pencil stroke along an edge. Many candidates surveyed cheaply, a few marked.",
-  "antiReference": "The developer-tool brand this category ships: geometric sans wordmark, one abstract glyph, a single indigo accent, soft shadows. That is also what findmejob.xyz looked like before this system.",
+  "northStar": "The product's own chrome at marketing scale",
+  "philosophy": "A number about somebody's career is only worth having if you can see the arithmetic behind it, so the arithmetic is the hero. The page reads as one continuous near-black surface with the application's own command-palette vocabulary scaled up: hairline rules instead of shadows, a four-rung surface ladder instead of elevation, and a single white pill carrying every download. Colour means a score band and nothing else.",
+  "antiReference": "What this category ships and what findmejob.xyz shipped before: white ground, centred hero, a floating drop-shadowed screenshot, three equal icon-heading-paragraph columns, and a testimonial wall there is no data for. Also refused: Raycast's own red launch-banner stripes, which are its signature and not jobscout's.",
+  "authority": "DESIGN.md at the repository root, pinned by the user before the redesign. Its tokens are transcribed verbatim into web/src/tokens.css. Nothing here invents a neighbour for a value that file does not declare.",
   "ramps": {
-    "paper": {
-      "base": "#f2f0ea",
-      "sunk": "#e8e4da",
-      "rule": "#ddd8cc"
+    "surface": {
+      "canvas": "#07080a",
+      "surface": "#0d0d0d",
+      "elevated": "#101111",
+      "card": "#121212"
+    },
+    "hairline": {
+      "base": "#242728",
+      "soft": "rgba(255,255,255,0.08)",
+      "strong": "rgba(255,255,255,0.16)"
     },
     "ink": {
-      "base": "#1a1714",
-      "secondary": "#645e56"
+      "ink": "#f4f4f6",
+      "body": "#cdcdcd",
+      "charcoal": "#d3d3d4",
+      "mute": "#9c9c9d",
+      "ash": "#6a6b6c",
+      "stone": "#434345"
     },
-    "film": {
-      "deep": "#191612",
-      "base": "#26221d",
-      "hi": "#322c25",
-      "silver": "#9a948a",
-      "window": "#fbfaf6"
-    },
-    "mark": {
-      "chinagraph": "#c0301a",
-      "safelight": "#c98a2e",
-      "amberInk": "#8a5a12"
+    "primary": {
+      "base": "#ffffff",
+      "pressed": "#e8e8e8",
+      "on": "#000000"
     },
     "bands": {
       "strong": {
-        "bg": "#e1eee4",
-        "ink": "#35634a",
-        "contrast": "5.78:1"
+        "tone": "#59d499",
+        "soft": "rgba(89,212,153,0.15)",
+        "range": "85-100",
+        "contrastOnCard": "10.2:1"
       },
       "good": {
-        "bg": "#dfe8ec",
-        "ink": "#406072",
-        "contrast": "5.39:1"
+        "tone": "#57c1ff",
+        "soft": "rgba(87,193,255,0.15)",
+        "range": "70-84",
+        "contrastOnCard": "9.5:1"
       },
       "partial": {
-        "bg": "#f3e9d5",
-        "ink": "#6f5120",
-        "contrast": "6.06:1"
+        "tone": "#ffc533",
+        "soft": "rgba(255,197,51,0.15)",
+        "range": "50-69",
+        "contrastOnCard": "11.9:1"
       },
       "weak": {
-        "bg": "#f0efeb",
-        "ink": "#6d6c67",
-        "contrast": "4.57:1"
+        "tone": "#ff6161",
+        "soft": "rgba(255,97,97,0.15)",
+        "range": "0-49",
+        "contrastOnCard": "6.5:1"
+      }
+    },
+    "keycap": {
+      "start": "#121212",
+      "end": "#0d0d0d",
+      "topEdge": "rgba(255,255,255,0.16)"
+    },
+    "gradient": {
+      "spectrumRule": "linear-gradient(90deg, #59d499 0%, #57c1ff 34%, #ffc533 67%, #ff6161 100%), 3px, full bleed above the nav",
+      "alphaCeilings": "Each alpha is the most of that accent the canvas takes while text at --mute still clears 4.5:1 over the glow's own peak. Measured, not estimated: the brightest ground under every hero text element was sampled at 1440 and 390, lowest result 6.47:1.",
+      "mask": "linear-gradient(to bottom, #000 74%, transparent 100%) — the wash fades out rather than terminating on the next section's hairline.",
+      "static": "Nothing in the gradient moves. The page still moves exactly twice.",
+      "installPage": "Radial, not striped: the same four in the same order at roughly half strength, masked to fade by 58%. That page is somewhere you arrive with a job to do.",
+      "heroField": {
+        "form": "Six diagonal stripes at rotate(-30deg), left to right in scale order — two greens, one blue, one yellow, two reds — blurred 9px, grained, and contained to a bloom centred on the headline rather than washing the section. The 3px spectrum rule above the nav, concentrated on the words.",
+        "why": "Adopted from Raycast's own hero, which the user supplied as a reference. The form is borrowed; the colour is not — Raycast's red launch stripes would make red mean 'weak band' and 'hero' at once, so the stripes run the score scale instead.",
+        "alphas": "Accents at 0.24-0.56 element opacity over a 0.72-0.9 tone. Low on purpose: white on #59d499 is 1.9:1 and could not carry a headline, while white on the same green mixed into this canvas clears 4.4:1 at the brightest point, against the 3:1 large text needs.",
+        "blur": "11px, applied once to the container rather than per stripe. At 44px the seven bands dissolved into one wash and the diagonal went with it.",
+        "grain": "A single 160px tile of fractal noise at 0.5 over the blur, mix-blend-mode overlay. The reference's own material, and what stops a large soft gradient banding on an 8-bit display.",
+        "mask": "Two masks composited. A radial ellipse brightest in a ring just outside the glyphs rather than on them, feathering all the way to transparent — a falloff that stops short leaves a legible oval, which is a blob and not a glow. A linear one cuts the field off above the button, because the white pill is the one bright thing in the section and a wash behind it takes that away.",
+        "motion": "Each stripe drifts and breathes on its own clock, 9-16s, under a 19s sweep rotating and scaling the whole field. Only transform and opacity animate. Reduced motion holds the field still rather than removing it: the colour is the design, the drift is the flourish.",
+        "size": "min(1340px, 152%) by min(660px, 380%) of the headline's own box, centred on it — a sibling of the h1, not of the section, so it is sized by the words. The hero clips it, which is what stops a bloom wider than a phone scrolling the page sideways."
       }
     }
   },
+  "type": {
+    "sans": "Inter, opsz 14..32, wght 400..700",
+    "mono": "Geist Mono, wght 400;500",
+    "features": "'calt', 'kern', 'liga', 'ss03'",
+    "featuresNote": "ss03 is on site-wide. It is a pinned decision of the system, not a default.",
+    "display": "clamp(38px, 6.6vw, 64px), weight 600, line-height 1.04, tracking -0.035em",
+    "sectionHeading": "clamp(26px, 3.4vw, 36px), weight 500, tracking -0.028em",
+    "body": "16px / 1.6",
+    "monoScope": "The quarantine and chmod commands only. Mono is for code here, never as a costume for 'technical'.",
+    "figures": "tabular-nums on every number: weights, points, file sizes, versions, band ranges."
+  },
   "elevation": {
-    "strategy": "none",
-    "note": "No shadows anywhere. Depth is value layering: paper, then film, then window, then mark. A drop shadow would make the film float above the worktop instead of resting on it."
+    "model": "None. Nothing on the page casts a shadow.",
+    "separation": "A change of surface rung, or a 1px hairline, never both on the same edge.",
+    "radii": {
+      "xs": "4px",
+      "sm": "6px",
+      "md": "8px",
+      "lg": "10px",
+      "xl": "16px",
+      "full": "9999px"
+    }
   },
   "motion": {
-    "easing": "cubic-bezier(0.16, 1, 0.3, 1)",
-    "arrival": "380-620ms",
-    "feedback": "140ms",
-    "press": "80ms",
-    "signature": "The mark scheme drawing itself: five weight bars filling 70ms apart with their figures arriving behind them.",
-    "reducedMotion": "The reveal hook checks prefers-reduced-motion and never arms; every element renders finished. Colour feedback that confirms an action survives, movement does not."
+    "count": "Three moving things, and the third is ambient by request: the mark card's sequence, the weight bar filling, and the hero field drifting.",
+    "moments": [
+      "The mark card, now in the mark scheme rather than the hero: five criterion tracks fill to the points each earned, the number counts to their exact sum in tabular figures, the band chip lights last. About 1.3s end to end.",
+      "The weight bar's five segments filling out to a hundred, staggered 70ms.",
+      "The hero field: seven stripes drifting on independent 21-36s clocks, continuous, transform only."
+    ],
+    "banned": "One identical fade-and-rise repeated per section. It was built and removed; wallpaper is not motion.",
+    "ease": "cubic-bezier(0.16, 1, 0.3, 1) — exponential ease-out, arrive fast and settle.",
+    "reducedMotion": "useReveal never arms. The finished figures are what the CSS declares, so they are simply there — not a shortened sequence."
   },
   "breakpoints": {
-    "hero": "1000px",
-    "scheme": "900px",
-    "page": "1240px"
+    "hero": "Full viewport: calc(100svh - 3px) under the spectrum rule, with the nav floating over it rather than sitting above it",
+    "mosaic": "900px to a 12-column grid, tiles at span 5 and span 7",
+    "bands": "680px to four columns",
+    "beats": "760px to four columns",
+    "tenets": "860px to three columns",
+    "shots": "860px to two columns",
+    "shell": "max-width 1200px, padding-inline clamp(20px, 4vw, 48px)",
+    "verified": "390, 1280, 1440, 1600 — no horizontal overflow at any",
+    "nav": "1040px drops the section links; 520px drops the Install link and shortens the bar",
+    "noteGrid": "1000px to three columns on the install page",
+    "weightBar": "760px from stacked segments to one proportional row"
   },
   "rules": [
-    "The Mark Rule. Chinagraph is a mark, never a surface carrying text \u2014 it fails AA as a text ground at 3.71:1.",
-    "The Straight Stroke Rule. The mark is a stroke along an edge. No rings, circles or drawn-on loops.",
-    "The Two Meanings Rule. Colour carries meaning in exactly two places: the mark, and the score bands.",
-    "The Flat Sheet Rule. If something must read as raised, change its value, not add a shadow.",
-    "Square corners everywhere. border-radius is 0 across the whole system.",
-    "The Imagery Rule. Type is a primary material at the scale of pictures, never introduced by a kicker."
+    "Colour means a score band. Green strong, blue good, yellow partial, red weak, and the four accents appear nowhere else. The feature tiles are monochrome and a selected control changes surface rather than taking a tint. The hero's stripe field and the 3px rule above the nav are the four bands in scale order — the gradient IS the scale, which is why it is allowed to be the page's loudest moment. Reorder them, or spend an accent on something that is not a band, and colour stops saying anything here.",
+    "A band's 15% soft tint may be a ground carrying text — DESIGN.md sanctions exactly that in badge-info-soft — but a saturated accent never is. At 3.71:1 against white the red could not carry text, and a system where one accent behaves differently from the other three is not a system.",
+    "Text stops at --mute (7.4:1 on canvas). --ash (3.70:1) and --stone (1.9:1) carry drawn marks and the disabled download state only.",
+    "The white pill is the only filled white element on the page. That is the entire reason it reads as the action from across the room.",
+    "No shadows anywhere.",
+    "Every figure on the page is real: the five weights from the app's ats.js, the four band thresholds, the two boards, the two-month bound, the app's own filter values and shortcuts, the three coding agents. The hero's example score is labelled as an example. No company, salary or job count is invented — see PRODUCT.md.",
+    "Assets that may not exist yet are probed with HEAD plus a content-type check, and their section degrades or removes itself. A host that answers 200 with index.html must not be able to produce a broken frame.",
+    "Browser surfaces are themed from the palette: selection, scrollbar track and thumb, focus ring, link underline colour and offset, tabular figures.",
+    "The nav is fixed, so anything an in-page anchor can land on carries scroll-margin-top. Section anchors use 96px and the hero's download target 110px; without them an anchor lands under the bar."
   ],
   "components": {
-    "button-primary": {
-      "html": "<a class=\"print\" href=\"#\">Download for macOS</a>",
-      "css": ".print{display:inline-block;background:#1a1714;color:#f2f0ea;font:700 1rem/54px Archivo,system-ui,sans-serif;letter-spacing:-.01em;text-decoration:none;padding:0 30px;border:0;transition:background 140ms ease,transform 140ms ease}.print:hover{background:#fff}.print:active{transform:scale(.99);transition-duration:80ms}"
-    },
-    "chip": {
-      "html": "<button class=\"chip is-chosen\"><span class=\"chip-window\"><b>macOS</b><span>DMG \u00b7 12 MB</span></span></button>",
-      "css": ".chip{padding:5px;border:0;background:#26221d;cursor:pointer;text-align:left}.chip.is-chosen{background:#322c25;box-shadow:inset 3px 0 0 #c0301a}.chip-window{position:relative;display:block;padding:10px 12px;background:#191612}.chip b{display:block;font:700 14px Archivo,system-ui,sans-serif;color:#fbfaf6}.chip-window>span{display:block;margin-top:2px;font:400 11px Archivo,system-ui,sans-serif;font-stretch:78%;letter-spacing:.08em;text-transform:uppercase;color:#9a948a}"
-    },
-    "frame": {
-      "html": "<figure class=\"frame\"><div class=\"frame-film\"><span class=\"perfs\"></span><div class=\"frame-window\"><img alt=\"\"></div><span class=\"perfs\"></span><span class=\"edge-mark\">jobscout 400 <b>12A</b></span></div><figcaption>Discover \u2014 the screen the app opens on.</figcaption></figure>",
-      "css": ".frame-film{position:relative;background:#26221d;padding:6px 0 4px}.perfs{display:block;height:9px;background-image:repeating-linear-gradient(to right,transparent 0 7px,#f2f0ea 7px 15px);background-color:#322c25}.frame-window{position:relative;margin:6px 8px;background:#fbfaf6;border-radius:0}.frame-window img{display:block;width:100%}.edge-mark{display:block;padding:5px 8px 0;font:600 10px Archivo,system-ui,sans-serif;font-stretch:62%;letter-spacing:.18em;text-transform:uppercase;color:#c98a2e}.edge-mark b{color:#fbfaf6;font-weight:700}.frame figcaption{margin-top:12px;padding-inline:8px;font:400 13px/1.5 Archivo,system-ui,sans-serif;color:#645e56}"
-    }
+    "pill": "The one primary. #ffffff on #000000, 8px radius, 46px tall, icon plus label. Quiet variant on --surface-elevated with a hairline ring for the phone and fallback states.",
+    "tab": "Platform strip. Two lines, 8px radius rather than a pill because the floor reserves pills for small controls. Selected state is --surface-elevated plus --hairline-strong. Roving tabindex with arrow/Home/End, matching the role=radiogroup it declares.",
+    "markcard": "Command-palette panel on --surface with a hairline ring: header strip, the score, five criterion rows, a keycap footer.",
+    "tile": "Feature tile on --surface, 10px radius, hairline ring, 24px padding, each carrying a drawn fragment of the app's own chrome at the bottom. Two widths, never one repeated size.",
+    "bandcard": "Score band. The full range at clamp(26px, 2.7vw, 34px) in the band's tone, on the band's soft tint, label beneath, with an sr-only spoken form because an en dash between numerals is read inconsistently.",
+    "keycap": "20px, --key-bg-start to --key-bg-end, hairline ring, plus a 1.5px --hairline-strong top edge so the two-stop ground reads as a key face at shipped size.",
+    "player": "Hairline frame with its own title bar and caption. Controls appear only once play has been asked for, so the first frame reads as one composed image rather than a browser widget.",
+    "weightBar": "One bar of a hundred units cut into five. Each segment's flex basis is its weight, so the widths are the figures and the sum is the bar. Figures sit above labels, so a label that wraps cannot drop its figure out of line with the other four.",
+    "pages": "index.html (landing) and download.html (install), sharing Chrome.jsx for the spectrum rule, nav and footer so the two cannot drift. The install page marks its own nav item with aria-current.",
+    "downloadButton": "Label from the user agent, href from the API, independent on purpose. Detection needs no network, so the button names the visitor's platform on first paint; the API only upgrades the link from /releases/latest to the exact asset. `detail={false}` on the landing page removes the filename, version, loading line and error text entirely — a visitor who came to download something should not be reading status text. The install page turns detail on, where the filename and size are the point. The nav's compact pill resolves through the same `downloadTarget` helper as the hero button, so the two can never disagree about what is being offered; it just wears the short label with the full one in sr-only text.",
+    "primary-nav": "A floating bar, not a full-width strip: max-width 1180px, 60px tall, 16px radius, inset from the top, on --surface at 72% with a 20px backdrop blur and a --hairline-soft ring. Fixed rather than sticky, so the hero below is a clean full screen and the bar floats over the moving field rather than capping it. Three columns — wordmark, section links, then GitHub, Install and a compact white pill. Section links go below 1040px and the Install link below 520px; the pill never does."
+  },
+  "assets": {
+    "rasters": "web/public/shots/discover.png — a real capture of the running application, taken by hand per docs/SCREENSHOTS.md in the private source repository. No raster on this page was generated; none is owed a generation prompt.",
+    "favicon": "web/public/favicon.svg — authored. The mechanism at 16px: a short list with one row marked, that row in the strong band's green.",
+    "icons": "web/src/Icons.jsx — authored SVG, one 24x24 grid, 1.5px strokes, round caps and joins, currentColor. No Unicode glyphs and no second source at a different weight."
   }
 }

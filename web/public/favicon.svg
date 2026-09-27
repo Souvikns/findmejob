@@ -1,12 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="jobscout">
   <!--
-    The mark: a film frame, ringed in grease pencil. The ring is drawn the way a
-    hand draws one — slightly out of round and not quite closed — because a
-    chinagraph ring that meets itself perfectly is a shape, not a mark.
+    The mark is the mechanism at 16px: a short list with one row marked.
+    Two rows sit in ash, one runs the full measure in the strong band's green.
+    Colour means a band here exactly as it does on the site.
   -->
-  <rect width="32" height="32" fill="#F2F0EA"/>
-  <rect x="9" y="11" width="14" height="10" fill="#26221D"/>
-  <path
-    d="M24.6 16.2c0 3.5-3.9 6.1-8.7 6.1-4.8 0-8.6-2.6-8.6-6.1 0-3.5 3.8-6.2 8.6-6.2 3.6 0 6.7 1.5 8 3.6"
-    fill="none" stroke="#C0301A" stroke-width="2.4" stroke-linecap="round"/>
+  <rect width="32" height="32" rx="7" fill="#0d0d0d" />
+  <rect x="7" y="8" width="11" height="3" rx="1.5" fill="#434345" />
+  <rect x="7" y="14.5" width="18" height="3" rx="1.5" fill="#59d499" />
+  <rect x="7" y="21" width="9" height="3" rx="1.5" fill="#434345" />
 </svg>

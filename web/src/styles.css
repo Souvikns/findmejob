@@ -1,70 +1,27 @@
-/*
- * THE CONTACT SHEET — findmejob.xyz
+@import './tokens.css';
+
+/**
+ * findmejob.xyz
  *
- * You shoot a roll, print every frame small on one sheet, and go down it with a
- * grease pencil ringing the two worth enlarging. That is the job search: many
- * candidates, cheaply surveyed, a few marked.
+ * One continuous dark page. There is no light mode and no theme switch: the whole
+ * site sits in a single tonal world, which is the pinned system's first rule, and
+ * the surface ladder plus 1px hairlines carry every separation that a shadow would
+ * otherwise do. Nothing in this file casts a shadow.
  *
- * The ground is warm fibre-paper near-black, and that is not a style choice
- * dressed up as one. On a real contact print the film's rebate passes light and
- * prints black while the frames carry the positive image — so a screenshot of a
- * light desktop application is the correct content for a frame rather than a
- * fight with the page.
+ * Two disciplines run through all of it:
  *
- * Two rules the whole sheet obeys:
+ *   Colour means a score band. Green strong, blue good, yellow partial, red weak.
+ *   That is why the feature tiles are monochrome, why state on a control is a
+ *   change of surface rather than a tint, and why the only filled white element on
+ *   the entire page is the download pill.
  *
- *   Chinagraph is a MARK, never a surface carrying text. It fails AA as a text
- *   ground at 3.71:1, and a grease pencil was never a fill anyway. It rings
- *   things; it does not hold them.
- *
- *   No shadows. Depth on a sheet is the sheet and the frames lying on it —
- *   square corners, rebate edges, and the light inside the window.
+ *   Motion happens once. The hero's mark card is the authored moment; every other
+ *   section shares one quiet entrance, declared as the *from* state only, so the
+ *   page is complete with JavaScript off and instant for anyone who asked for
+ *   reduced motion.
  */
 
-:root {
-    /* The page is the worktop the sheet is lying on. The sheet itself is still
-       film — dark rebate, light frames — it simply is not the whole screen. */
-    --paper: #f2f0ea;
-    --sunk: #e8e4da;
-    --rule: #ddd8cc;
-    --ink: #1a1714;
-    --silver: #645e56;
-    --chinagraph: #c0301a;
-    --amber: #8a5a12;
-
-    /* The film. These do not invert with the page: a rebate that prints black
-       prints black whatever it is lying on. */
-    --film: #26221d;
-    --film-hi: #322c25;
-    --film-deep: #191612;
-    --window: #fbfaf6;
-    --film-silver: #9a948a;
-    --safelight: #c98a2e;
-
-    /* The four score bands, as the application draws them. */
-    --band-strong-bg: #e1eee4;
-    --band-strong-ink: #35634a;
-    --band-good-bg: #dfe8ec;
-    --band-good-ink: #406072;
-    --band-partial-bg: #f3e9d5;
-    --band-partial-ink: #6f5120;
-    --band-weak-bg: #f0efeb;
-    --band-weak-ink: #6d6c67;
-
-    --gutter: clamp(20px, 5vw, 60px);
-    --page: 1240px;
-    --hair: 1px;
-
-    --display: 'Bricolage Grotesque', Georgia, serif;
-    --text: Archivo, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-
-    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --settle: 480ms;
-    --feedback: 140ms;
-
-    color-scheme: light;
-    accent-color: var(--chinagraph);
-}
+/* ---------------------------------------------------------------- reset */
 
 *,
 *::before,
@@ -72,97 +29,124 @@
     box-sizing: border-box;
 }
 
+* {
+    margin: 0;
+}
+
 html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    html {
-        scroll-behavior: auto;
-    }
-}
-
 body {
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: var(--text);
+    background: var(--canvas);
+    color: var(--body);
+    font-family: var(--sans);
     font-size: 16px;
     line-height: 1.6;
-    font-synthesis: none;
+    font-feature-settings: var(--features);
     -webkit-font-smoothing: antialiased;
-    font-variant-numeric: tabular-nums lining-nums;
+    text-rendering: optimizeLegibility;
 }
 
-/* The surfaces the browser draws belong to the sheet too: a default blue
-   selection and a chrome-grey scrollbar are ink from another document. */
-::selection {
-    background: var(--chinagraph);
-    color: var(--ink);
+img,
+svg,
+video {
+    display: block;
+    max-width: 100%;
 }
 
-* {
-    scrollbar-color: var(--rule) transparent;
-    scrollbar-width: thin;
-}
-
-*::-webkit-scrollbar {
-    width: 11px;
-    height: 11px;
-}
-
-*::-webkit-scrollbar-thumb {
-    background: var(--rule);
-}
-
-*::-webkit-scrollbar-track {
-    background: var(--paper);
-}
-
-:focus-visible {
-    outline: 2px solid var(--chinagraph);
-    outline-offset: 3px;
+button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    font-feature-settings: var(--features);
 }
 
 h1,
 h2,
-h3,
-p,
-dl,
-dd,
-ul,
-ol,
-figure {
-    margin: 0;
+h3 {
+    color: var(--ink);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
 }
 
-ul,
-ol {
-    padding: 0;
-    list-style: none;
-}
-
-a {
-    color: inherit;
-    text-decoration-thickness: 1px;
-    text-decoration-color: var(--rule);
-    text-underline-offset: 4px;
-    transition: text-decoration-color var(--feedback) ease;
-}
-
-a:hover {
-    text-decoration-color: var(--chinagraph);
-}
-
-img {
-    max-width: 100%;
-    height: auto;
+p {
+    text-wrap: pretty;
 }
 
 code,
 kbd {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-family: var(--mono);
+    font-feature-settings: normal;
+}
+
+/* ------------------------------------------------- browser surfaces
+   The parts nobody draws still ship with the design: selection, the
+   scrollbar, focus rings, link underlines and the numerals in every figure
+   on the page. Left alone these belong to no design system at all. */
+
+::selection {
+    background: #30353a;
+    color: var(--on-dark);
+}
+
+html {
+    scrollbar-color: var(--stone) var(--canvas);
+    scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--canvas);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--stone);
+    border: 3px solid var(--canvas);
+    border-radius: var(--r-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--ash);
+}
+
+a {
+    color: var(--on-dark);
+    text-decoration-color: var(--mute);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: color 0.16s var(--ease), text-decoration-color 0.16s var(--ease);
+}
+
+a:hover {
+    text-decoration-color: var(--on-dark);
+}
+
+:focus-visible {
+    outline: 2px solid var(--on-dark);
+    outline-offset: 3px;
+    border-radius: var(--r-xs);
+}
+
+/* Every number on this page is a figure in a table of figures: weights,
+   points, sizes, versions. Proportional digits make them jump. */
+b,
+kbd,
+code,
+.markcard-score,
+.markrow-num,
+.weights,
+.pill-note {
+    font-variant-numeric: tabular-nums;
 }
 
 .sr-only {
@@ -170,858 +154,1885 @@ kbd {
     width: 1px;
     height: 1px;
     padding: 0;
-    margin: -1px;
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
+    border: 0;
 }
 
 .skip {
     position: fixed;
-    left: -9999px;
-    top: 0;
-    z-index: 40;
-    background: var(--ink);
-    color: var(--paper);
-    padding: 12px 18px;
-    font-weight: 700;
+    left: var(--lg);
+    top: var(--lg);
+    z-index: 30;
+    transform: translateY(-200%);
+    background: var(--primary);
+    color: var(--on-primary);
+    font-size: 14px;
+    font-weight: 500;
+    padding: var(--sm) var(--lg);
+    border-radius: var(--r-md);
     text-decoration: none;
 }
 
-.skip:focus {
+.skip:focus-visible {
+    transform: none;
+}
+
+/* ---------------------------------------------------------------- shell */
+
+.shell {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: clamp(20px, 4vw, 48px);
+}
+
+/* ------------------------------------------------------------------ nav */
+
+/* A floating bar, not a full-width strip. It sits over the hero's colour
+   instead of bounding it, so the surface is translucent and blurred rather
+   than opaque — the stripe field keeps moving underneath and stays legible
+   as light rather than being cut off by a lid.
+
+   Fixed rather than sticky, which lets the hero below be a clean full
+   screen with the bar floating on it. Everything that scrolls under it
+   therefore needs scroll-margin, or an in-page anchor lands beneath it. */
+
+.nav {
+    position: fixed;
+    top: clamp(8px, 1.4vw, 16px);
     left: 0;
+    right: 0;
+    z-index: 20;
+    padding-inline: clamp(12px, 3vw, 28px);
+    pointer-events: none;
 }
 
-/* ====================================================================== */
-/* The film                                                               */
-/* ====================================================================== */
-
-/*
- * Sprocket perforations. A repeating gradient rather than a dozen empty spans:
- * there are twelve per edge, none of them mean anything individually, and this
- * is a real measuring artefact of film stock rather than decorative stripes.
- */
-.perfs {
-    display: block;
-    height: 9px;
-    flex: none;
-    background-image: repeating-linear-gradient(
-        to right,
-        transparent 0 7px,
-        var(--paper) 7px 15px
-    );
-    background-color: var(--film-hi);
-}
-
-/* Edge printing: the condensed type the manufacturer exposes between the
-   perforations. Archivo at width 62 is that type. */
-.edge-mark {
-    display: block;
-    padding: 5px 8px 0;
-    font-size: 10px;
-    font-weight: 600;
-    font-stretch: 62%;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--safelight);
-}
-
-.edge-mark b {
-    color: var(--window);
-    font-weight: 700;
-}
-
-.frame {
-    min-width: 0;
-}
-
-.frame-film {
-    position: relative;
-    background: var(--film);
-    padding: 6px 0 4px;
-}
-
-.frame-window {
-    position: relative;
-    margin: 6px 8px;
-    background: var(--window);
-    /* Square, always. A rounded film frame is not a film frame. */
-    border-radius: 0;
-}
-
-.frame-window img {
-    display: block;
-    width: 100%;
-}
-
-.frame figcaption {
-    margin-top: 12px;
-    padding-inline: 8px;
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--silver);
-}
-
-/* ====================================================================== */
-/* The film                                                               */
-/* ====================================================================== */
-
-/*
- * Sprocket perforations. A repeating gradient rather than a dozen empty spans:
- * there are twelve per edge, none of them mean anything individually, and this
- * is a real measuring artefact of film stock rather than decorative stripes.
- */
-.perfs {
-    display: block;
-    height: 9px;
-    flex: none;
-    background-image: repeating-linear-gradient(
-        to right,
-        transparent 0 7px,
-        var(--paper) 7px 15px
-    );
-    background-color: var(--film-hi);
-}
-
-/* Edge printing: the condensed type the manufacturer exposes between the
-   perforations. Archivo at width 62 is that type. */
-.edge-mark {
-    display: block;
-    padding: 5px 8px 0;
-    font-size: 10px;
-    font-weight: 600;
-    font-stretch: 62%;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--safelight);
-}
-
-.edge-mark b {
-    color: var(--window);
-    font-weight: 700;
-}
-
-.frame {
-    min-width: 0;
-}
-
-.frame-film {
-    position: relative;
-    background: var(--film);
-    padding: 6px 0 4px;
-}
-
-.frame-window {
-    position: relative;
-    margin: 6px 8px;
-    background: var(--window);
-    /* Square, always. A rounded film frame is not a film frame. */
-    border-radius: 0;
-}
-
-.frame-window img {
-    display: block;
-    width: 100%;
-}
-
-.frame figcaption {
-    margin-top: 12px;
-    padding-inline: 8px;
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--silver);
-}
-
-/*
- * The grease-pencil ring. One open arc, drawn on: a chinagraph ring that meets
- * itself perfectly reads as a shape rather than as a mark, and a hand lays one
- * down starting at the lower left.
- */
-
-
-
-
-
-
-
-
-/* ====================================================================== */
-/* Masthead                                                               */
-/* ====================================================================== */
-
-.masthead {
-    display: flex;
+.nav-bar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    max-width: var(--page);
-    margin: 0 auto;
-    padding: 22px var(--gutter);
+    gap: var(--lg);
+    width: 100%;
+    max-width: 1180px;
+    margin-inline: auto;
+    height: 60px;
+    padding-inline: var(--lg) var(--sm);
+    border-radius: var(--r-xl);
+    background: color-mix(in srgb, var(--surface) 72%, transparent);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    box-shadow: inset 0 0 0 1px var(--hairline-soft);
+    pointer-events: auto;
 }
 
 .wordmark {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    font-family: var(--display);
-    font-size: 19px;
-    font-weight: 700;
-    font-stretch: 80%;
-    letter-spacing: -0.02em;
+    gap: var(--sm);
     color: var(--ink);
-}
-
-.ring-mark {
-    width: 30px;
-    height: 30px;
-    flex: none;
-    color: var(--ink);
-}
-
-.masthead-link {
-    font-size: 14px;
+    font-size: 17px;
     font-weight: 600;
-    color: var(--silver);
+    letter-spacing: -0.025em;
     text-decoration: none;
 }
 
-.masthead-link:hover {
-    color: var(--ink);
+.mark {
+    width: 22px;
+    height: 22px;
+    flex: none;
 }
 
-/* ====================================================================== */
-/* The sheet                                                              */
-/* ====================================================================== */
-
-main {
-    max-width: var(--page);
-    margin: 0 auto;
-    padding: 0 var(--gutter);
+.wordmark-sm {
+    font-size: 15px;
 }
 
-.hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(40px, 6vw, 64px);
-    padding: clamp(28px, 5vw, 56px) 0 clamp(44px, 7vw, 88px);
-    align-items: start;
+.wordmark-sm .mark {
+    width: 19px;
+    height: 19px;
 }
 
-@media (min-width: 1000px) {
-    .hero {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-        gap: clamp(40px, 5vw, 72px);
-    }
-}
-
-.hero-copy {
+.nav-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--xs);
     min-width: 0;
 }
 
-/* Type as the primary material, at the scale of imagery rather than above it. */
-h1 {
-    font-family: var(--display);
-    font-size: clamp(2.35rem, 5.4vw, 4rem);
-    font-weight: 700;
-    font-stretch: 84%;
+.nav-links a,
+.nav-plain {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    color: var(--mute);
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 7px var(--md);
+    border-radius: var(--r-md);
+    transition: background 0.16s var(--ease), color 0.16s var(--ease);
+}
+
+.nav-links a:hover,
+.nav-plain:hover {
+    background: var(--surface-elevated);
+    color: var(--on-dark);
+}
+
+.nav-plain[aria-current='page'] {
+    color: var(--on-dark);
+}
+
+.nav-end {
+    display: flex;
+    align-items: center;
+    gap: var(--xs);
+}
+
+/* The bar carries its own tab stop order: wordmark, sections, then the
+   action, which is the reading order too. */
+@media (max-width: 1040px) {
+    .nav-links {
+        display: none;
+    }
+
+    .nav-bar {
+        grid-template-columns: auto 1fr;
+    }
+
+    .nav-end {
+        justify-self: end;
+    }
+}
+
+@media (max-width: 520px) {
+    .nav-optional {
+        display: none;
+    }
+
+    .nav-bar {
+        height: 54px;
+        padding-inline: var(--md) 6px;
+    }
+}
+
+/* ----------------------------------------------------------------- hero */
+
+/* One line and one button, centred, with the gradient given the whole field
+   to work in. With nothing else competing there is no reason for the type to
+   be small or for the colour to be shy. */
+
+.hero {
+    position: relative;
+    display: grid;
+    place-items: center;
+    /* svh rather than vh: on iOS the address bar collapses on scroll, and vh
+       measures the taller state, which leaves the hero overshooting the
+       screen it is meant to be. The nav floats over this rather than sitting
+       above it, so the hero is the whole screen and the top padding is what
+       keeps the headline clear of the bar. */
+    min-height: 100svh;
+    padding-block: clamp(120px, 15vw, 168px) clamp(48px, 8vw, 96px);
+    text-align: center;
+    /* The bloom is deliberately wider than the words, which on a phone makes
+       it wider than the screen. The section clips it; without this the page
+       scrolls sideways. */
+    overflow: clip;
+}
+
+.hero-head {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+/* ------------------------------------------------------- the hero field
+   The four score bands, in order, at the scale of the words: six diagonal
+   stripes blurred into one another and dusted with grain.
+
+   Every stripe is an accent at low alpha over the near-black canvas rather
+   than an accent at full strength. That is a legibility constraint, not a
+   timid one — white on #59d499 is 1.9:1 and could not carry a headline,
+   while white on the same green mixed into this canvas clears 7:1.
+
+   Only transform and opacity animate, on a layer of its own, so the drift
+   costs no layout and no paint. The blur is applied once to the container
+   rather than per stripe, which is the difference between one filter pass
+   and seven. */
+
+/* Sized and centred on the headline, so the colour reads as light coming off
+   the words rather than as a backdrop the words happen to sit on.
+
+   The thing that makes it a glow and not a box is that the mask reaches full
+   transparency well inside the element's own edges. An ellipse wider than the
+   box is still partly opaque where the box stops, and `overflow: hidden` then
+   cuts that opacity off square — which is the faint rectangle you notice
+   without being able to name. So the box is deliberately much larger than the
+   light inside it, and the radial closes at 38% of a 50% half-width, leaving a
+   wide margin that is guaranteed to be empty on every side.
+
+   Brightest in a ring just outside the glyphs rather than on them: light
+   radiating off the line, and a calmer pocket for white type to sit in. The
+   second mask cuts the field off above the button, because the white pill is
+   the one bright thing in the section and a wash behind it takes that away. */
+.hero-field {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(1560px, 196%);
+    height: min(860px, 490%);
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+    pointer-events: none;
+    -webkit-mask-image:
+        radial-gradient(
+            ellipse 38% 36% at 50% 48%,
+            rgba(0, 0, 0, 0.4) 0%,
+            rgba(0, 0, 0, 0.82) 22%,
+            #000 40%,
+            rgba(0, 0, 0, 0.5) 64%,
+            rgba(0, 0, 0, 0.18) 80%,
+            transparent 96%
+        ),
+        linear-gradient(to bottom, #000 0%, #000 58%, transparent 82%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        radial-gradient(
+            ellipse 38% 36% at 50% 48%,
+            rgba(0, 0, 0, 0.4) 0%,
+            rgba(0, 0, 0, 0.82) 22%,
+            #000 40%,
+            rgba(0, 0, 0, 0.5) 64%,
+            rgba(0, 0, 0, 0.18) 80%,
+            transparent 96%
+        ),
+        linear-gradient(to bottom, #000 0%, #000 58%, transparent 82%);
+    mask-composite: intersect;
+}
+
+.hero-stripes {
+    position: absolute;
+    inset: -60% -40%;
+    filter: blur(9px);
+    will-change: transform;
+    animation: sweep 19s ease-in-out infinite alternate;
+}
+
+@keyframes sweep {
+    from {
+        transform: rotate(-7deg) scale(1);
+    }
+    to {
+        transform: rotate(7deg) scale(1.2);
+    }
+}
+
+.stripe {
+    position: absolute;
+    top: -10%;
+    left: var(--x);
+    width: var(--w);
+    height: 120%;
+    opacity: var(--o);
+    transform: rotate(-30deg);
+    /* A band with its own soft shoulders, so neighbouring stripes bleed into
+       each other the way light does rather than butting up like tape. */
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        var(--tone) 18%,
+        var(--tone) 82%,
+        transparent 100%
+    );
+    animation:
+        drift var(--d) ease-in-out var(--delay) infinite alternate,
+        breathe calc(var(--d) * 0.7) ease-in-out var(--delay) infinite alternate;
+}
+
+.stripe-green {
+    --tone: rgba(89, 212, 153, 1);
+}
+
+.stripe-blue {
+    --tone: rgba(87, 193, 255, 1);
+}
+
+.stripe-yellow {
+    --tone: rgba(255, 197, 51, 0.82);
+}
+
+.stripe-red {
+    --tone: rgba(255, 97, 97, 0.96);
+}
+
+/* Each stripe runs its own clock, so the field never visibly loops and no
+   two of them line up the same way twice. */
+@keyframes drift {
+    from {
+        transform: rotate(-30deg) translate3d(-38%, -9%, 0) scaleX(0.78);
+    }
+    to {
+        transform: rotate(-30deg) translate3d(38%, 9%, 0) scaleX(1.5);
+    }
+}
+
+@keyframes breathe {
+    from {
+        opacity: calc(var(--o) * 0.42);
+    }
+    to {
+        opacity: var(--o);
+    }
+}
+
+/* The grain is the reference's own material, not texture standing in for
+   craft: a single tile of monochrome noise over the blur, which is what
+   stops a large soft gradient banding on an 8-bit display. */
+.hero-grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+.hero-inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hero h1 {
+    max-width: 15ch;
+    font-size: clamp(40px, 8.2vw, 86px);
+    font-weight: 600;
     line-height: 1.02;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.038em;
+    color: var(--on-dark);
+}
+
+/* ----------------------------------------------- the line to the notes
+   All that is left of the unsigned-app warning on the landing page. It has
+   to be findable without competing with the pill directly above it, so it
+   is an underlined link at caption size rather than a second button. */
+
+.act-aside {
+    margin-top: var(--lg);
+    font-size: 13px;
+    letter-spacing: 0.1px;
+    color: var(--mute);
+    text-decoration-color: var(--stone);
+}
+
+.act-aside:hover {
+    color: var(--on-dark);
+}
+
+/* Wraps to two centred lines on a phone rather than running gutter to
+   gutter on one. It stays a single line wherever there is room. */
+@media (max-width: 600px) {
+    .act-aside {
+        max-width: 30ch;
+    }
+}
+
+/* The action. The pill is the system's only primary and the only filled
+   white block on the site, which is the entire reason it reads as the thing
+   to do from across the room. */
+
+.act {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: clamp(32px, 4vw, 44px);
+    scroll-margin-top: 110px;
+}
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sm);
+    background: var(--primary);
+    color: var(--on-primary);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    text-decoration: none;
+    border-radius: var(--r-md);
+    padding: 0 var(--xl);
+    height: 46px;
+    transition: background 0.16s var(--ease), transform 0.16s var(--ease);
+}
+
+.pill-sm {
+    height: 36px;
+    padding: 0 var(--lg);
+    font-size: 13.5px;
+    border-radius: var(--r-md);
+}
+
+.pill:hover {
+    background: var(--primary-pressed);
+}
+
+.pill:active {
+    background: var(--primary-pressed);
+    transform: translateY(1px);
+}
+
+.pill-quiet {
+    background: var(--surface-elevated);
+    color: var(--on-dark);
+    box-shadow: inset 0 0 0 1px var(--hairline);
+}
+
+.pill-quiet:hover {
+    background: var(--surface-card);
+}
+
+.pill.is-waiting {
+    background: var(--surface-elevated);
+    color: var(--ash);
+    box-shadow: inset 0 0 0 1px var(--hairline);
+}
+
+.pill-note {
+    margin-top: var(--md);
+    font-size: 13px;
+    line-height: 1.5;
+    letter-spacing: 0.1px;
+    color: var(--body);
+    max-width: 64ch;
     text-wrap: balance;
 }
 
-.lede {
-    margin-top: 22px;
-    max-width: 40ch;
-    font-size: clamp(1rem, 1.2vw, 1.0625rem);
-    color: var(--silver);
+.nowrap {
+    white-space: nowrap;
 }
 
-.lede strong {
+.pill-note {
+    text-align: center;
+}
+
+.pill-note b {
     color: var(--ink);
-    font-weight: 600;
+    font-weight: 500;
 }
 
-/* ====================================================================== */
-/* The download — the one lit block on a dark sheet                       */
-/* ====================================================================== */
-
-.download {
-    margin-top: 34px;
-}
-
-.print {
-    display: inline-block;
-    background: var(--ink);
-    color: var(--paper);
-    font: inherit;
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: -0.01em;
-    text-decoration: none;
-    padding: 0 30px;
-    line-height: 54px;
-    border: 0;
-    transition: background var(--feedback) ease, transform var(--feedback) ease;
-}
-
-.print:hover {
-    background: #fff;
-}
-
-.print:active {
-    transform: scale(0.99);
-    transition-duration: 80ms;
-}
-
-.print-quiet {
-    background: transparent;
+.pill-file {
+    display: block;
+    margin-bottom: 3px;
     color: var(--ink);
-    box-shadow: inset 0 0 0 2px var(--rule);
-}
-
-.print-quiet:hover {
-    background: var(--sunk);
-    box-shadow: inset 0 0 0 2px var(--silver);
-}
-
-.print-wait {
-    background: var(--sunk);
-    color: var(--silver);
-    cursor: wait;
-}
-
-.print-note {
-    margin-top: 14px;
-    max-width: 44ch;
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--silver);
     overflow-wrap: anywhere;
-    animation: settle 420ms var(--ease-out) both;
 }
 
-.print-note b {
-    color: var(--ink);
-    font-weight: 600;
+/* A dot separator drawn rather than typed, so it never inherits the wrong
+   size or gets selected along with the filename. */
+.dot {
+    display: inline-block;
+    width: 3px;
+    height: 3px;
+    margin-inline: 7px;
+    vertical-align: 3px;
+    border-radius: var(--r-full);
+    background: var(--stone);
 }
 
-@keyframes settle {
-    from {
-        opacity: 0;
-        transform: translateY(-4px);
-    }
-}
+/* The platform strip. State is a change of surface, never a colour. */
 
-/* --- the platform strip ------------------------------------------------ */
-
-/* Three frames, and the ring is on yours. Marking a different one is the
-   override, which is the same gesture the whole sheet is about. */
 .strip {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 26px;
-    margin-bottom: 10px;
+    justify-content: center;
+    gap: var(--sm);
+    margin-top: var(--xl);
 }
 
-.chip {
-    flex: 1 1 8rem;
-    min-width: 0;
-    padding: 5px;
-    border: 0;
-    background: var(--film);
-    font: inherit;
-    cursor: pointer;
+.tab {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
     text-align: left;
-    transition: background var(--feedback) ease;
+    padding: 9px var(--lg);
+    border-radius: var(--r-md);
+    box-shadow: inset 0 0 0 1px var(--hairline);
+    background: transparent;
+    transition: background 0.16s var(--ease), box-shadow 0.16s var(--ease);
 }
 
-.chip:hover {
-    background: var(--film-hi);
-}
-
-.chip-window {
-    position: relative;
-    display: block;
-    padding: 10px 12px;
-    background: var(--film-deep);
-}
-
-.chip b {
-    display: block;
+.tab b {
     font-size: 14px;
-    font-weight: 700;
-    color: var(--window);
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    color: var(--body);
+    transition: color 0.16s var(--ease);
 }
 
-.chip-window > span {
-    display: block;
-    margin-top: 2px;
-    font-size: 11px;
-    font-stretch: 78%;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--film-silver);
+.tab span {
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    color: var(--mute);
 }
 
-.chip.is-chosen {
-    background: var(--film-hi);
-    /* The mark, without a circle: a grease-pencil stroke down the chosen
-       frame's leading edge. A lit window here would have given the page a
-       second bright block competing with the download. */
-    box-shadow: inset 3px 0 0 var(--chinagraph);
+.tab:hover {
+    background: var(--surface);
 }
 
-.chip.is-chosen b {
-    color: var(--window);
+.tab:hover b {
+    color: var(--on-dark);
 }
 
+.tab.is-on {
+    background: var(--surface-elevated);
+    box-shadow: inset 0 0 0 1px var(--hairline-strong);
+}
 
+.tab.is-on b {
+    color: var(--on-dark);
+}
 
-/* ====================================================================== */
-/* Before first launch                                                    */
-/* ====================================================================== */
+/* --------------------------------------------------------- first run */
 
-/*
- * macOS reports an unsigned app as "damaged", which reads as a corrupt download
- * rather than a missing signature. A visitor who meets that unprepared deletes
- * the file and leaves, so this sits directly under the download rather than in
- * documentation they would have to go and find.
- */
 .firstrun {
-    margin-top: 34px;
-    max-width: 40rem;
-    background: var(--sunk);
-    padding: 20px 22px;
-    border-left: 2px solid var(--chinagraph);
+    margin-top: clamp(32px, 4vw, 44px);
+    padding-top: var(--xl);
+    border-top: 1px solid var(--hairline);
+    max-width: 48ch;
 }
 
 .firstrun h2 {
-    font-family: var(--display);
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: -0.015em;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
     color: var(--ink);
 }
 
 .firstrun p {
-    margin-top: 10px;
+    margin-top: var(--sm);
     font-size: 14px;
-    color: var(--silver);
+    line-height: 1.6;
+    color: var(--mute);
 }
 
-.firstrun p strong {
-    color: var(--ink);
-    font-weight: 600;
+.firstrun strong {
+    color: var(--charcoal);
+    font-weight: 500;
 }
 
 .firstrun .after {
+    margin-top: var(--md);
     font-size: 13px;
+    color: var(--mute);
 }
 
 .command {
     display: flex;
-    flex-wrap: wrap;
     align-items: stretch;
-    gap: 8px;
-    margin-top: 16px;
-}
-
-.command code {
-    flex: 1 1 15rem;
-    min-width: 0;
-    background: var(--ink);
-    padding: 11px 13px;
-    font-size: 12.5px;
-    line-height: 1.55;
-    color: var(--paper);
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-}
-
-.command button {
-    flex: none;
-    align-self: flex-start;
-    padding: 11px 15px;
-    border: 0;
-    background: var(--ink);
-    font: inherit;
-    font-size: 12px;
-    font-weight: 700;
-    font-stretch: 84%;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--paper);
-    cursor: pointer;
-    transition: background var(--feedback) ease, color var(--feedback) ease;
-}
-
-.command button:hover {
-    background: var(--silver);
-    color: var(--paper);
-}
-
-/* Copying has no other visible result on the page, so the acknowledgment has to
-   be unmistakable: the button lights and the command it took flashes its edge. */
-.command button[data-copied='true'] {
-    background: var(--chinagraph);
-    color: var(--paper);
-}
-
-.command:has(button[data-copied='true']) code {
-    animation: copied 620ms var(--ease-out);
-}
-
-@keyframes copied {
-    0% {
-        box-shadow: inset 0 0 0 2px var(--chinagraph);
-    }
-    100% {
-        box-shadow: inset 0 0 0 2px transparent;
-    }
-}
-
-/* ====================================================================== */
-/* The hero frame                                                         */
-/* ====================================================================== */
-
-.hero-frame {
-    min-width: 0;
-}
-
-/* The sheet is laid down rather than simply being there. */
-.hero-frame[data-stage='armed'] .frame {
-    opacity: 0;
-    transform: translateY(16px) scale(0.99);
-}
-
-.hero-frame[data-stage='running'] .frame {
-    opacity: 1;
-    transform: none;
-    transition: opacity var(--settle) var(--ease-out),
-        transform 620ms var(--ease-out);
-}
-
-.hero-frame[data-stage='armed'] 
-
-.hero-frame[data-stage='running'] 
-
-/* ====================================================================== */
-/* Section furniture                                                      */
-/* ====================================================================== */
-
-.what,
-.roll,
-.scheme {
-    padding: clamp(34px, 6vw, 72px) 0 clamp(28px, 4vw, 48px);
-    border-top: var(--hair) solid var(--rule);
-}
-
-.what h2,
-.roll h2,
-.scheme h2 {
-    margin-bottom: 34px;
-    font-size: 11px;
-    font-weight: 700;
-    font-stretch: 70%;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--amber);
-}
-
-/* ====================================================================== */
-/* The mark scheme                                                        */
-/* ====================================================================== */
-
-.scheme-body {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(28px, 4vw, 44px);
-    align-items: start;
-}
-
-@media (min-width: 900px) {
-    .scheme-body {
-        grid-template-columns: minmax(0, 1fr) minmax(300px, 0.82fr);
-        gap: clamp(36px, 5vw, 72px);
-    }
-}
-
-.scheme-side p {
-    max-width: 46ch;
-    font-size: 15px;
-    color: var(--silver);
-}
-
-.scheme-side p + p {
-    margin-top: 14px;
-}
-
-.weights {
-    min-width: 0;
-    max-width: 30rem;
-}
-
-.weight {
-    display: grid;
-    gap: 7px;
-    padding: 13px 0;
-    border-bottom: var(--hair) solid var(--rule);
-}
-
-.weight:first-child {
-    padding-top: 0;
-}
-
-.weight:last-child {
-    border-bottom: 0;
-}
-
-.weight dt {
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.005em;
-    color: var(--ink);
-}
-
-.weight dd {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    margin: 0;
-}
-
-.weight-track {
-    flex: 1;
-    min-width: 0;
-    height: 9px;
-    background: var(--sunk);
+    gap: 1px;
+    margin-top: var(--md);
+    background: var(--hairline);
+    border-radius: var(--r-md);
     overflow: hidden;
 }
 
-/*
- * The bar is monochrome on purpose: a weight is a proportion, the length
- * already carries it, and tinting five criteria in five colours would imply a
- * ranking the colours do not encode. Colour appears on the bands below, where
- * it means something.
- */
-.weight-fill {
-    display: block;
+.command code {
+    flex: 1;
+    min-width: 0;
+    background: var(--surface);
+    color: var(--charcoal);
+    font-size: 12.5px;
+    line-height: 1.5;
+    padding: 10px var(--md);
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+}
+
+.command code::-webkit-scrollbar {
+    display: none;
+}
+
+.command button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: none;
+    background: var(--surface-elevated);
+    color: var(--body);
+    font-size: 13px;
+    font-weight: 500;
+    padding-inline: var(--md);
+    transition: background 0.16s var(--ease), color 0.16s var(--ease);
+}
+
+.command button:hover {
+    background: var(--surface-card);
+    color: var(--on-dark);
+}
+
+.command button[data-copied='true'] {
+    color: var(--accent-green);
+}
+
+/* ------------------------------------------------------- the mark card
+   The page's one authored moment: five tracks filling to the share of the
+   score each criterion carried, a number counting to their exact sum, and
+   the band chip arriving last. */
+
+.markcard-wrap {
+    min-width: 0;
+}
+
+.markcard {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+}
+
+.markcard-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--md);
+    padding: var(--md) var(--lg);
+    border-bottom: 1px solid var(--hairline);
+    background: var(--surface-elevated);
+}
+
+.markcard-title {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    color: var(--mute);
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    padding: 3px 9px 3px 7px;
+    border-radius: var(--r-xs);
+}
+
+.chip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--r-full);
+    background: currentColor;
+}
+
+.chip-strong {
+    color: var(--accent-green);
+    background: var(--accent-green-soft);
+}
+
+.markcard-score {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--sm) var(--lg);
+    padding: var(--xl) var(--lg) var(--lg);
+}
+
+.markcard-score > b {
+    font-size: clamp(48px, 5.4vw, 64px);
+    font-weight: 600;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--on-dark);
+}
+
+.markcard-pct {
+    font-size: 0.34em;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--mute);
+    margin-left: 0.1em;
+}
+
+.markcard-of {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--mute);
+    max-width: 22ch;
+}
+
+.markcard-rows {
+    padding: var(--sm) var(--lg) var(--lg);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+}
+
+.markrow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+    padding: 7px var(--sm);
+    margin-inline: calc(var(--sm) * -1);
+    border-radius: var(--r-sm);
+    transition: background 0.16s var(--ease);
+}
+
+.markrow:hover {
+    background: var(--surface-card);
+}
+
+.markrow dt {
+    font-size: 13.5px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    color: var(--charcoal);
+}
+
+.markrow dd {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--md);
+}
+
+.markrow-found {
+    grid-column: 1 / -1;
+    font-size: 12px;
+    letter-spacing: 0.2px;
+    color: var(--mute);
+    order: -1;
+}
+
+/* The track's own length encodes the weight — 40 is the widest, 10 a
+   quarter of it — and the fill inside encodes the share earned. Both
+   readings are in the geometry, neither needs a colour. */
+.markrow-track {
+    position: relative;
+    height: 5px;
+    width: calc(var(--of) / var(--widest) * 100%);
+    min-width: 24px;
+    border-radius: var(--r-full);
+    background: var(--hairline);
+    overflow: hidden;
+}
+
+.markrow-fill {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--ink);
+    transform-origin: left center;
+    transform: scaleX(var(--share));
+}
+
+.markrow-num {
+    justify-self: end;
+    font-size: 12.5px;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+}
+
+.markrow-num b {
+    font-weight: 500;
+    color: var(--ink);
+}
+
+.markrow-num i {
+    font-style: normal;
+    color: var(--mute);
+}
+
+.markcard-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sm) var(--xl);
+    padding: 10px var(--lg);
+    border-top: 1px solid var(--hairline);
+    background: var(--surface-elevated);
+    font-size: 12px;
+    letter-spacing: 0.2px;
+    color: var(--mute);
+}
+
+.markcard-foot span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding-inline: 5px;
+    font-size: 11.5px;
+    line-height: 1;
+    color: var(--body);
+    background: linear-gradient(var(--key-bg-start), var(--key-bg-end));
+    box-shadow:
+        inset 0 1.5px 0 var(--hairline-strong),
+        inset 0 0 0 1px var(--hairline);
+    border-radius: var(--r-xs);
+}
+
+.markcard-caption {
+    margin-top: var(--md);
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--mute);
+    max-width: 44ch;
+}
+
+/* The sequence. Declared as the from state only, so with no JavaScript, or
+   with reduced motion asked for, the finished card is simply there. */
+
+.markcard[data-stage='armed'] {
+    opacity: 0;
+    transform: translateY(12px);
+}
+
+.markcard[data-stage='armed'] .markrow {
+    opacity: 0;
+    transform: translateY(6px);
+}
+
+.markcard[data-stage='armed'] .markrow-fill {
+    transform: scaleX(0);
+}
+
+.markcard[data-stage='armed'] .chip {
+    opacity: 0;
+    transform: scale(0.94);
+}
+
+.markcard[data-stage='running'] {
+    transition: opacity 0.5s var(--ease), transform 0.6s var(--ease);
+}
+
+.markcard[data-stage='running'] .markrow {
+    transition: opacity 0.4s var(--ease), transform 0.5s var(--ease);
+    transition-delay: calc(140ms + var(--step) * 66ms);
+}
+
+.markcard[data-stage='running'] .markrow-fill {
+    transition: transform 0.72s var(--ease);
+    transition-delay: calc(200ms + var(--step) * 66ms);
+}
+
+.markcard[data-stage='running'] .chip {
+    transition: opacity 0.4s var(--ease), transform 0.5s var(--ease);
+    transition-delay: 820ms;
+}
+
+/* ------------------------------------------------------ section rhythm
+   Tonal continuity, never a break: the ladder's two lowest rungs alternate
+   and a hairline marks every seam. */
+
+.walk,
+.features,
+.scheme,
+.shots,
+.close {
+    padding-block: clamp(64px, 8vw, var(--section));
+    border-top: 1px solid var(--hairline);
+    /* Clears the floating bar when an in-page anchor lands here. */
+    scroll-margin-top: 96px;
+}
+
+.walk,
+.scheme {
+    background: var(--surface);
+}
+
+.walk-head,
+.features-head {
+    max-width: 44ch;
+    margin-bottom: clamp(32px, 4vw, 48px);
+}
+
+.walk h2,
+.features h2,
+.scheme h2,
+.shots h2,
+.close h2 {
+    font-size: clamp(26px, 3.4vw, 36px);
+    line-height: 1.12;
+    letter-spacing: -0.028em;
+}
+
+.walk-head p,
+.features-head p {
+    margin-top: var(--md);
+    font-size: 16px;
+    color: var(--mute);
+}
+
+/* -------------------------------------------------------- walkthrough */
+
+.player {
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: var(--surface-elevated);
+}
+
+.player-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--md);
+    padding: 9px var(--lg);
+    border-bottom: 1px solid var(--hairline);
+    font-size: 12px;
+    letter-spacing: 0.3px;
+}
+
+.player-name {
+    color: var(--mute);
+    font-weight: 500;
+}
+
+.player-meta {
+    color: var(--mute);
+}
+
+.player-stage {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background: var(--canvas);
+}
+
+.player-video,
+.player-still {
+    width: 100%;
     height: 100%;
-    width: calc(var(--weight) * 1%);
+    object-fit: cover;
+    object-position: top center;
+}
+
+.player-still {
+    background: var(--canvas);
+}
+
+/* Controls only appear once play has been asked for, so the first frame
+   reads as one composed image rather than as a browser widget. */
+.player-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--md);
+    background: color-mix(in srgb, var(--canvas) 62%, transparent);
+    color: var(--on-dark);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    transition: background 0.2s var(--ease);
+}
+
+.player-play svg {
+    padding: 15px 13px 15px 17px;
+    border-radius: var(--r-full);
+    background: var(--primary);
+    color: var(--on-primary);
+    box-sizing: content-box;
+    transition: transform 0.2s var(--ease);
+}
+
+.player-play:hover {
+    background: color-mix(in srgb, var(--canvas) 48%, transparent);
+}
+
+.player-play:hover svg {
+    transform: scale(1.06);
+}
+
+.player figcaption {
+    padding: 11px var(--lg);
+    border-top: 1px solid var(--hairline);
+    font-size: 12.5px;
+    letter-spacing: 0.1px;
+    color: var(--mute);
+}
+
+.beats {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--xl);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1px;
+    background: var(--hairline);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+    overflow: hidden;
+}
+
+@media (min-width: 760px) {
+    .beats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.beats li {
+    background: var(--surface);
+    padding: var(--lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--xs);
+}
+
+.beats b {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    color: var(--ink);
+}
+
+.beats span {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--mute);
+}
+
+/* ------------------------------------------------------------ features */
+
+.mosaic {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--lg);
+}
+
+@media (min-width: 900px) {
+    .mosaic {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .tile {
+        grid-column: span 5;
+    }
+
+    .tile-wide {
+        grid-column: span 7;
+    }
+}
+
+.tile {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-lg);
+    padding: var(--xl);
+    transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+.tile:hover {
+    border-color: var(--hairline-strong);
+    background: var(--surface-elevated);
+}
+
+.tile-head {
+    display: flex;
+    align-items: center;
+    gap: var(--md);
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+.tile-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border-radius: var(--r-md);
+    background: var(--surface-card);
+    box-shadow: inset 0 0 0 1px var(--hairline);
+    color: var(--mute);
+}
+
+.tile p {
+    margin-top: var(--md);
+    margin-bottom: auto;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--mute);
+    max-width: 52ch;
+}
+
+/* The drawn fragments. Each one is a piece of the application's own chrome
+   rebuilt in the page's vocabulary, never a picture of one, and every value
+   in them is real. */
+
+.art {
+    margin-top: clamp(20px, 2.4vw, 28px);
+}
+
+.art-rows {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sm);
+}
+
+.art-rows span {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sm);
+    font-size: 13px;
+    letter-spacing: 0.2px;
+    color: var(--body);
+    background: var(--surface-card);
+    box-shadow: inset 0 0 0 1px var(--hairline);
+    border-radius: var(--r-sm);
+    padding: 5px 11px 5px 9px;
+}
+
+.art-rows i {
+    width: 5px;
+    height: 5px;
+    border-radius: var(--r-full);
+    background: var(--ash);
+}
+
+/* The window every search is held inside, as a tape with the ignored end
+   and the searched end both named on themselves — a bar whose legend has to
+   be read somewhere else is a bar nobody reads. */
+.art-range {
+    display: flex;
+    margin-top: var(--md);
+    border-radius: var(--r-sm);
+    box-shadow: inset 0 0 0 1px var(--hairline);
+    overflow: hidden;
+    font-size: 11.5px;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.art-range em {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    padding-inline: var(--md);
+    font-style: normal;
+    overflow: hidden;
+}
+
+.art-range-old {
+    flex: 1 1 58%;
+    min-width: 0;
+    color: var(--ash);
+    background: var(--canvas);
+    text-decoration: line-through;
+    text-decoration-color: var(--ash);
+}
+
+.art-range-live {
+    flex: 0 0 auto;
+    color: var(--ink);
+    background: var(--surface-card);
+    box-shadow: inset 1px 0 0 var(--hairline-strong);
+}
+
+.art-keys {
+    display: grid;
+    gap: 1px;
+    background: var(--hairline);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+    overflow: hidden;
+}
+
+.art-keys > div {
+    display: flex;
+    align-items: center;
+    gap: var(--md);
+    background: var(--surface-card);
+    padding: 7px var(--md);
+}
+
+.art-keys dt {
+    display: flex;
+    gap: 3px;
+    flex: none;
+    min-width: 48px;
+}
+
+.art-keys dd {
+    font-size: 12.5px;
+    letter-spacing: 0.2px;
+    color: var(--mute);
+}
+
+.art-filters {
+    display: grid;
+    gap: var(--sm);
+}
+
+.art-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.art-pills span {
+    font-size: 12.5px;
+    letter-spacing: 0.2px;
+    color: var(--mute);
+    border-radius: var(--r-full);
+    padding: 4px 11px;
+}
+
+.art-pills span.is-on {
+    color: var(--on-dark);
+    background: var(--surface-card);
+    box-shadow: inset 0 0 0 1px var(--hairline-strong);
+}
+
+.art-agents {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sm) var(--lg);
+}
+
+.art-agent-rows {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    background: var(--hairline);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+    overflow: hidden;
+}
+
+.art-agent-rows span {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sm);
+    background: var(--surface-card);
+    font-size: 12.5px;
+    letter-spacing: 0.2px;
+    color: var(--mute);
+    padding: 7px var(--md);
+}
+
+.art-agent-rows i {
+    width: 5px;
+    height: 5px;
+    border-radius: var(--r-full);
+    background: var(--stone);
+}
+
+.art-agent-rows span.is-on {
+    color: var(--on-dark);
+    background: var(--surface-elevated);
+}
+
+.art-agent-rows span.is-on i {
+    background: var(--body);
+}
+
+.art-agent-note {
+    font-size: 11.5px;
+    letter-spacing: 0.4px;
+    color: var(--mute);
+}
+
+/* The closing tenets: no card, on purpose. The rhythm breaks before it
+   becomes a pattern, and three plain columns under one hairline read as a
+   statement rather than as more inventory. */
+
+.tenets {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--xl) clamp(24px, 4vw, 56px);
+    margin-top: clamp(40px, 5vw, 56px);
+    padding-top: clamp(28px, 3.5vw, 40px);
+    border-top: 1px solid var(--hairline);
+}
+
+@media (min-width: 860px) {
+    .tenets {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.tenets h3 {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    color: var(--ink);
+}
+
+.tenets p {
+    margin-top: var(--sm);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--mute);
+}
+
+/* -------------------------------------------------------- mark scheme */
+
+.scheme-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(40px, 5vw, 72px);
+    align-items: stretch;
+}
+
+.scheme-copy {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 980px) {
+    .scheme-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 0.88fr);
+    }
+}
+
+.scheme-copy p {
+    margin-top: var(--lg);
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--mute);
+    max-width: 62ch;
+}
+
+.scheme-copy h2 {
+    max-width: 24ch;
+}
+
+.scheme-fine {
+    margin-top: auto !important;
+    padding-top: var(--xl);
+    font-size: 13.5px !important;
+    color: var(--mute) !important;
+    border-top: 1px solid var(--hairline);
+}
+
+/* One bar of a hundred units, cut into five. Each segment's flex basis is its
+   weight, so the widths are the figures and the sum is the bar. Five separate
+   bars would have said the same thing and shown none of it. */
+
+.weights {
+    margin-top: clamp(40px, 5vw, 64px);
+    background: var(--surface-elevated);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+}
+
+.weightbar {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 760px) {
+    .weightbar {
+        flex-direction: row;
+    }
+
+    .seg {
+        flex: var(--w) 1 0;
+        min-width: 0;
+    }
+
+    .seg + .seg {
+        border-left: 1px solid var(--hairline);
+        border-top: 0;
+    }
+}
+
+.seg {
+    padding: var(--lg) var(--xl) var(--xl);
+}
+
+.seg + .seg {
+    border-top: 1px solid var(--hairline);
+}
+
+.seg-bar {
+    order: -2;
+    display: block;
+    height: 6px;
+    width: 100%;
+    margin-bottom: var(--lg);
+    border-radius: var(--r-full);
     background: var(--ink);
     transform-origin: left center;
 }
 
-.weight b {
-    flex: none;
-    min-width: 2ch;
-    text-align: right;
-    font-size: 13px;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
+/* Stacked, the segment is full width, so the bar inside it has to carry the
+   proportion the column width carried a breakpoint up. */
+@media (max-width: 759px) {
+    .seg-bar {
+        width: calc(var(--w) * 1%);
+        min-width: 24px;
+    }
+}
+
+.seg {
+    display: flex;
+    flex-direction: column;
+}
+
+.seg dd {
+    order: -1;
+    font-size: clamp(22px, 2.2vw, 28px);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
     color: var(--ink);
 }
 
-[data-stage='armed'] .weight-fill {
-    transform: scaleX(0);
-}
-
-[data-stage='running'] .weight-fill {
-    transform: scaleX(1);
-    transition: transform 560ms var(--ease-out);
-    transition-delay: calc(var(--step) * 70ms);
-}
-
-[data-stage='armed'] .weight b {
-    opacity: 0;
-}
-
-[data-stage='running'] .weight b {
-    opacity: 1;
-    transition: opacity 260ms ease calc(var(--step) * 70ms + 180ms);
-}
-
-.bands {
-    margin-top: clamp(24px, 3vw, 36px);
-}
-
-.bands-label {
-    margin-bottom: 12px;
+.seg dt {
+    margin-top: 2px;
     font-size: 13px;
-    color: var(--silver);
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    color: var(--mute);
 }
 
-.bands ul {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-}
-
-/* The one place colour carries meaning on the sheet. Each band keeps its hue
-   from the application and the word is always spelled out — the tint is a
-   second cue, never the only one. */
-.band {
+.weights-sum {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 10px;
-    padding: 11px 14px;
+    gap: var(--lg);
+    padding: var(--md) var(--xl);
+    border-top: 1px solid var(--hairline);
+    background: var(--surface);
+    font-size: 13px;
+    letter-spacing: 0.2px;
+    color: var(--mute);
 }
 
-.band b {
-    font-size: 14px;
-    font-weight: 700;
+.weights-sum b {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
 }
 
-.band span {
-    font-size: 12px;
+/* Where colour finally arrives, and the only thing on this page it means. */
+
+.bands {
+    list-style: none;
+    padding: 0;
+    margin-top: clamp(48px, 6vw, 72px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--md);
+}
+
+@media (min-width: 680px) {
+    .bands {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.bandcard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--xs);
+    padding: var(--xl);
+    border-radius: var(--r-lg);
+    background: var(--tone-soft);
+    box-shadow: inset 0 0 0 1px var(--hairline);
+}
+
+/* The threshold itself, at the scale of the claim. It is decorative to a
+   screen reader — the label and the range beneath it say the same thing in
+   words — so it is hidden from one rather than read out twice. */
+.bandcard-range {
+    font-size: clamp(26px, 2.7vw, 34px);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
-    opacity: 0.8;
+    color: var(--tone);
 }
 
-.band-strong { background: var(--band-strong-bg); color: var(--band-strong-ink); }
-.band-good { background: var(--band-good-bg); color: var(--band-good-ink); }
-.band-partial { background: var(--band-partial-bg); color: var(--band-partial-ink); }
-.band-weak { background: var(--band-weak-bg); color: var(--band-weak-ink); }
-
-[data-stage='armed'] .band {
-    opacity: 0;
-    transform: translateY(8px);
-}
-
-[data-stage='running'] .band {
-    opacity: 1;
-    transform: none;
-    transition: opacity 320ms var(--ease-out) calc(var(--step) * 60ms + 320ms),
-        transform 320ms var(--ease-out) calc(var(--step) * 60ms + 320ms);
-}
-
-/* ====================================================================== */
-/* What it does                                                           */
-/* ====================================================================== */
-
-.facts {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-    gap: 34px clamp(32px, 4vw, 52px);
-}
-
-.fact {
-    min-width: 0;
-}
-
-.facts dt {
-    font-family: var(--display);
-    font-size: 17px;
-    font-weight: 700;
-    font-stretch: 88%;
-    letter-spacing: -0.02em;
-    line-height: 1.25;
-    color: var(--ink);
-}
-
-.facts dd {
-    margin-top: 10px;
+.bands b {
+    margin-top: var(--xs);
     font-size: 15px;
-    color: var(--silver);
-}
-
-kbd {
-    display: inline-block;
-    min-width: 1.6em;
-    padding: 1px 5px;
-    text-align: center;
-    background: var(--sunk);
-    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
     color: var(--ink);
 }
 
-/* Six steps at 55ms is 275ms of sequence — one arrival, not six. */
-.facts[data-stage='armed'] .fact {
-    opacity: 0;
-    transform: translateY(10px);
+.bandcard-strong {
+    --tone: var(--accent-green);
+    --tone-soft: var(--accent-green-soft);
 }
 
-.facts[data-stage='running'] .fact {
-    opacity: 1;
-    transform: none;
-    transition: opacity 380ms var(--ease-out) calc(var(--step) * 55ms),
-        transform 380ms var(--ease-out) calc(var(--step) * 55ms);
+.bandcard-good {
+    --tone: var(--accent-blue);
+    --tone-soft: var(--accent-blue-soft);
 }
 
-/* ====================================================================== */
-/* The rest of the roll                                                   */
-/* ====================================================================== */
+.bandcard-partial {
+    --tone: var(--accent-yellow);
+    --tone-soft: var(--accent-yellow-soft);
+}
 
-.frames {
+.bandcard-weak {
+    --tone: var(--accent-red);
+    --tone-soft: var(--accent-red-soft);
+}
+
+/* -------------------------------------------------------------- shots */
+
+.shot-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: clamp(26px, 3.5vw, 40px);
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--xl);
+    margin-top: clamp(32px, 4vw, 44px);
 }
 
-/* With nothing captured, every frame removes itself and the heading would
-   introduce an empty grid. */
-.roll:has(.frames:empty) {
-    display: none;
+@media (min-width: 860px) {
+    .shot-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
-/* ====================================================================== */
-/* Foot                                                                   */
-/* ====================================================================== */
+.shot-window {
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: var(--surface);
+}
 
-footer {
-    max-width: var(--page);
-    margin: 0 auto;
-    padding: clamp(28px, 4vw, 44px) var(--gutter) clamp(44px, 6vw, 72px);
-    border-top: var(--hair) solid var(--rule);
+.shot-window img {
+    width: 100%;
+    height: auto;
+}
+
+.shot figcaption {
+    margin-top: var(--md);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--mute);
+}
+
+/* -------------------------------------------------------------- close */
+
+.close-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.close h2 {
+    max-width: 22ch;
+}
+
+.close p {
+    margin-top: var(--lg);
+    max-width: 52ch;
+    font-size: 15.5px;
+    color: var(--mute);
+}
+
+.close code {
+    font-size: 13.5px;
+    color: var(--charcoal);
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px var(--hairline);
+    border-radius: var(--r-xs);
+    padding: 2px 6px;
+}
+
+/* ------------------------------------------------------------- footer */
+
+.foot {
+    border-top: 1px solid var(--hairline);
+    padding-block: clamp(40px, 5vw, 64px);
+}
+
+.foot-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--xl);
+}
+
+@media (min-width: 760px) {
+    .foot-inner {
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        row-gap: var(--xxl);
+    }
+
+    .foot-links {
+        justify-self: end;
+    }
+
+    .fine {
+        grid-column: 1 / -1;
+    }
 }
 
 .foot-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 26px;
-    font-size: 15px;
-    font-weight: 600;
+    gap: var(--sm) var(--xl);
+}
+
+.foot-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    color: var(--body);
+    text-decoration: none;
+}
+
+.foot-links a svg {
+    color: var(--ash);
+    transition: transform 0.16s var(--ease), color 0.16s var(--ease);
+}
+
+.foot-links a:hover {
+    color: var(--on-dark);
+}
+
+.foot-links a:hover svg {
+    transform: translateX(3px);
+    color: var(--mute);
 }
 
 .fine {
-    margin-top: 14px;
-    max-width: 62ch;
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--silver);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--mute);
+    max-width: 68ch;
 }
 
-.fine code {
-    font-size: 12px;
-    color: var(--ink);
+/* --------------------------------------------------- the two moments
+   The page moves exactly twice, and both times it is the content itself
+   arriving rather than a section sliding in: the mark card's sequence in
+   the mark scheme, and the weight bar filling out to a hundred beneath
+   it. One
+   entrance repeated on every section is wallpaper, so there isn't one.
+
+   Both declare only the *from* state, added by JavaScript in the frame the
+   element mounts. With no script, or with reduced motion asked for, the
+   finished figures are simply there. */
+
+.weights[data-stage='armed'] .seg-bar {
+    transform: scaleX(0);
 }
 
-/* ====================================================================== */
-/* Reduced motion                                                         */
-/* ====================================================================== */
+.weights[data-stage='running'] .seg-bar {
+    transition: transform 0.7s var(--ease);
+    transition-delay: calc(100ms + var(--step) * 70ms);
+}
 
-/*
- * Fewer and gentler, not none: the colour and state changes that confirm an
- * action stay and only the movement goes. The reveals never arm — useReveal
- * checks the same preference — so everything is simply in its finished state,
- * the chinagraph ring included.
- */
 @media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    /* The field holds its position. The colour is the design; the drift is
+       the flourish, and only the flourish is what was opted out of. */
+    .stripe {
+        animation: none;
+        transform: rotate(-30deg) translate3d(0, 0, 0);
+        opacity: var(--o);
+    }
+
+    .hero-stripes {
+        animation: none;
+        transform: none;
+    }
+
     *,
     *::before,
     *::after {
         animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
+}
 
-    .print:active {
-        transform: none;
-    }
+/* =================================================== the install page
+   Same chrome, same ladder, same one white pill. It reads as a page of
+   this site rather than as documentation bolted onto it. */
 
-    .command button {
-        transition-duration: 120ms !important;
+.page-head {
+    position: relative;
+    padding-block: clamp(128px, 15vw, 176px) clamp(40px, 5vw, 64px);
+    text-align: center;
+}
+
+/* A quieter cut of the hero's aurora: the same four bands in the same scale
+   order, at roughly half the strength, because this page is somewhere you
+   arrive with a job to do rather than somewhere you are being persuaded. */
+.page-head::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(
+            50% 78% at 8% 40%,
+            rgba(89, 212, 153, 0.13),
+            rgba(89, 212, 153, 0) 70%
+        ),
+        radial-gradient(
+            48% 80% at 30% 62%,
+            rgba(87, 193, 255, 0.13),
+            rgba(87, 193, 255, 0) 70%
+        ),
+        radial-gradient(
+            48% 80% at 70% 62%,
+            rgba(255, 197, 51, 0.1),
+            rgba(255, 197, 51, 0) 70%
+        ),
+        radial-gradient(
+            50% 78% at 92% 40%,
+            rgba(255, 97, 97, 0.11),
+            rgba(255, 97, 97, 0) 70%
+        );
+    -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
+}
+
+.page-head .shell {
+    position: relative;
+}
+
+.page-head h1 {
+    max-width: 18ch;
+    margin-inline: auto;
+    font-size: clamp(34px, 5.2vw, 56px);
+    font-weight: 600;
+    line-height: 1.06;
+    letter-spacing: -0.032em;
+    color: var(--on-dark);
+}
+
+.page-head > .shell > p {
+    max-width: 56ch;
+    margin: var(--lg) auto 0;
+    font-size: clamp(15px, 1.2vw, 17px);
+    color: var(--mute);
+}
+
+.notes,
+.verify {
+    padding-block: clamp(56px, 7vw, 88px);
+    border-top: 1px solid var(--hairline);
+}
+
+.notes {
+    background: var(--surface);
+}
+
+.notes h2,
+.verify h2 {
+    font-size: clamp(22px, 2.6vw, 28px);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+}
+
+.note-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--lg);
+    margin-top: clamp(28px, 3.5vw, 40px);
+}
+
+@media (min-width: 1000px) {
+    .note-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+}
+
+.firstrun-boxed {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0;
+    padding: var(--xl);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-lg);
+    background: var(--surface-elevated);
+    max-width: none;
+}
+
+.firstrun-label {
+    margin-bottom: var(--sm) !important;
+    font-size: 12px !important;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    color: var(--mute) !important;
+}
+
+.firstrun-boxed h2 {
+    font-size: 16px;
+}
+
+/* The copy block and the command sit apart so three notes of different
+   lengths still line their commands up with each other. */
+.firstrun-boxed .command {
+    margin-top: auto;
+}
+
+.firstrun-boxed .command code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    overflow-x: visible;
+}
+
+.firstrun-boxed .command button {
+    align-items: flex-start;
+    padding-top: 10px;
+}
+
+.firstrun-boxed .after {
+    margin-top: var(--md);
+}
+
+.verify-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(32px, 4vw, 56px);
+}
+
+@media (min-width: 860px) {
+    .verify-inner {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.verify p {
+    margin-top: var(--md);
+    max-width: 58ch;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--mute);
+}
+
+.verify code {
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--surface);
+    box-shadow: inset 0 0 0 1px var(--hairline);
+    border-radius: var(--r-xs);
+    padding: 2px 6px;
 }

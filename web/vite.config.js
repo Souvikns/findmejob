@@ -1,3 +1,4 @@
+import {resolve} from 'node:path'
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -7,6 +8,17 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: './',
   plugins: [react()],
+  // Two pages, two HTML entry points. Real URLs rather than client-side
+  // routing: the site deploys static, and /download.html resolves the same
+  // at a domain root and under a project path with no server rewrites.
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(import.meta.dirname, 'index.html'),
+        download: resolve(import.meta.dirname, 'download.html')
+      }
+    }
+  },
   server: {
     port: 4004,
     host: '0.0.0.0',
