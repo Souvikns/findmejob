@@ -72,18 +72,25 @@ What the site must keep doing, all already built:
 What jobscout does, verified in source:
 
 - Full-text search over **Greenhouse** and **Wellfound**, by title and
-  description. **Every search is bounded to the last two months**
-  (`search.MaxAgeMonths = 2`, raised in `Query.Normalize` so no transport can
-  widen it) because an older posting is usually filled or abandoned.
+  description. **Searches reach back two months by default and up to twelve.**
+  The ceiling is the API's (`search.MaxAgeMonths = 12`, applied in
+  `Query.Normalize` so no transport can widen it); the two-month default is the
+  app's own, set in `frontend/src/prefs.js` as `DEFAULT_JOB_AGE_DAYS` and
+  changed by the user in Settings → Search → "Posted within". The default is
+  narrower than the ceiling because an older posting is usually filled or
+  abandoned, but how fresh is the user's call to make.
 - Filters: location (suggestions carry their own job counts), work mode,
   seniority, employment type, years of experience. Sort by match or by newest.
 - Every result states which board it came from; the boards differ in pay
   conventions, application flow and missing metadata.
 - An opened listing **marks where the search words landed** in it.
 - A **profile**, fillable from a résumé PDF read inside the app's own window.
-  Only filename, size and extracted text are kept — the file never leaves. The
-  profile itself syncs to the user's Supabase row, so it follows them to another
-  machine.
+  Only filename, size and extracted text are kept — the *file* never leaves. The
+  profile, extracted text included, syncs to the user's Supabase row so it
+  follows them to another machine, and is sent to the chosen coding agent on
+  every chat turn so answers can be about them. Say "the file never leaves",
+  never "the résumé never leaves": the text does, in two directions, and the
+  chat panel says so before the first question.
 - A **match score** computed locally over five criteria — required skills 40,
   experience 20, seniority 15, role relevance 15, preferred skills 10. A
   criterion the posting is silent about is dropped and the remaining weights

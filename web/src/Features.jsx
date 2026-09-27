@@ -41,10 +41,11 @@ export default function Features() {
                         </TileHead>
                         <p>
                             Listings from Greenhouse and Wellfound, searched by title and
-                            description. Every search is bounded to the last two months —
-                            an older posting is usually filled or abandoned — and each
-                            result says which of the two boards it came from, because they
-                            differ in what they promise.
+                            description. Searches reach back two months by default — an
+                            older posting is usually filled or abandoned — and Settings
+                            widens that to a year when you want the long view. Each result
+                            says which of the two boards it came from, because they differ
+                            in what they promise.
                         </p>
                         <BoardArt />
                     </article>
@@ -88,12 +89,14 @@ export default function Features() {
 
                 <div className="tenets">
                     <div>
-                        <h3>Your résumé never leaves the machine</h3>
+                        <h3>Your résumé file never leaves the machine</h3>
                         <p>
-                            The PDF is read inside the app's own window. Only the
-                            filename, the size and the extracted text are kept, and no
-                            score is ever stored — every number is computed the moment it
-                            is shown.
+                            The PDF is read inside the app's own window and is never
+                            uploaded. Only the filename, the size and the extracted text
+                            are kept — that text syncs to your account so the profile
+                            follows you, and it is what the agent is given when you ask it
+                            about a listing. No score is ever stored: every number is
+                            computed the moment it is shown.
                         </p>
                     </div>
                     <div>
@@ -142,7 +145,7 @@ function BoardArt() {
             </div>
             <div className="art-range">
                 <em className="art-range-old">Older postings</em>
-                <em className="art-range-live">Last 2 months</em>
+                <em className="art-range-live">2 months, or up to a year</em>
             </div>
         </div>
     );

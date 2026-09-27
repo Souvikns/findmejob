@@ -134,7 +134,7 @@ export default function Walkthrough() {
                     <li>
                         <b>Search</b>
                         <span>
-                            One query over both boards, bounded to the last two months.
+                            One query over both boards, the last two months by default.
                         </span>
                     </li>
                     <li>
